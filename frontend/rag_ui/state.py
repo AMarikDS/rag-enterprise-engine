@@ -36,8 +36,8 @@ class State(rx.State):
     chunk_overlap: int = 200
     selected_model: str = "gemini-3.6-flash"
     available_models: list[str] = [
-        "gemini-3.7-flash (⚡️ Рекомендуемая, быстрая)",
-        "gemini-2.5-pro (🧠 Мощная, для сложных задач)",
+        "gemini-3.7-flash (⚡️ Рекомендуемая, быстрая, топ для бесплатного тарифа)",
+        "gemini-2.5-pro (🧠 Мощная, но жесткие лимиты без подписки)",
         "gemini-3.6-flash (Стабильная)",
         "gemini-flash-latest (Автообновляемая)"
     ]

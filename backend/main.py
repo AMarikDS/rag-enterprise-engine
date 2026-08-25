@@ -170,7 +170,11 @@ def chat(req: ChatRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        err_msg = str(e) if str(e) else repr(e)
+        err_msg = str(e)
+        if "Connection reset by peer" in err_msg or "ReadError" in err_msg or "ReadTimeout" in err_msg:
+            err_msg = "Ошибка соединения с сервером ИИ (возможно, бесплатный лимит запросов исчерпан или сеть нестабильна). Подождите минуту и попробуйте еще раз."
+        elif not err_msg.strip():
+            err_msg = repr(e)
         raise HTTPException(status_code=500, detail=err_msg)
 
 @app.get("/api/sessions")
