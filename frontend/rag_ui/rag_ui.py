@@ -44,6 +44,10 @@ def settings_dialog() -> rx.Component:
                     spacing="4",
                     margin_top="15px"
                 ),
+                rx.cond(
+                    State.is_indexing,
+                    rx.progress(value=None, width="100%", color_scheme="cyan", margin_top="15px", variant="classic"),
+                ),
                 rx.cond(State.indexing_status != "", rx.text(State.indexing_status, color="yellow", margin_top="15px")),
                 align_items="start",
                 width="100%"
