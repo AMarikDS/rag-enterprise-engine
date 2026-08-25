@@ -1,18 +1,17 @@
 from google import genai
 from google.genai import types
 from backend.core.config import settings
+from fastembed import TextEmbedding
 
 class LLMService:
     def __init__(self):
         self.client = genai.Client(api_key=settings.gemini_api_key)
-        self.embedding_model = "gemini-embedding-2"
+        # Локальная модель для векторизации (бесплатно и без лимитов!)
+        self.embedding_model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
         
     def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
-        response = self.client.models.embed_content(
-            model=self.embedding_model,
-            contents=texts,
-        )
-        return [emb.values for emb in response.embeddings]
+        embeddings = list(self.embedding_model.embed(texts))
+        return [emb.tolist() for emb in embeddings]
 
     def generate_answer(self, query: str, context: list[str], model: str = "gemini-2.5-flash") -> str:
         context_str = "\n\n".join(context)

@@ -15,10 +15,9 @@ class QdrantVectorDB:
 
     def _ensure_collection(self):
         if not self.client.collection_exists(self.collection_name):
-            # 768 is the default dimension for text-embedding-004
             self.client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=768, distance=Distance.COSINE),
+                vectors_config=VectorParams(size=384, distance=Distance.COSINE),
             )
 
     def add_chunks(self, chunks: list[str], embeddings: list[list[float]], metadata: list[dict]):
