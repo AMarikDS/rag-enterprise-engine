@@ -92,9 +92,6 @@ def index_documents(req: IndexRequest):
                     else:
                         raise e
             
-            # Задержка между батчами, чтобы не превысить 15 запросов в минуту
-            time.sleep(2)
-            
         qdrant_db.add_chunks(texts, all_embeddings, metadatas)
         return {"status": "ok", "message": f"Successfully indexed {len(texts)} chunks."}
     except Exception as e:
