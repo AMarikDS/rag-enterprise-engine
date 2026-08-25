@@ -197,6 +197,7 @@ def index() -> rx.Component:
                                 State.chat_history,
                                 lambda msg: chat_bubble(msg.text, msg.is_user, msg.sources)
                             ),
+                            id="chat_history_box",
                             overflow_y="auto",
                             flex="1",
                             width="100%",
@@ -210,8 +211,8 @@ def index() -> rx.Component:
                         rx.spinner(color="cyan", size="3"),
                     ),
                     rx.hstack(
-                        rx.input(
-                            placeholder="Задайте вопрос...",
+                        rx.text_area(
+                            placeholder="Задайте вопрос... (Enter - отправить, Shift+Enter - перенос)",
                             value=State.current_query,
                             on_change=State.set_current_query,
                             on_key_down=State.on_key_down,
@@ -221,6 +222,7 @@ def index() -> rx.Component:
                             color_scheme="cyan",
                             background="rgba(255, 255, 255, 0.05)",
                             color="white",
+                            auto_height=True,
                             disabled=State.current_session_id == ""
                         ),
                         rx.button(

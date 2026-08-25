@@ -94,6 +94,7 @@ class State(rx.State):
                 self.selected_model = s.get("model", "gemini-3.6-flash")
                 break
         await self.load_history()
+        return rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
 
     async def create_session(self):
         if not self.new_session_name or not self.current_kb_name:
@@ -189,7 +190,7 @@ class State(rx.State):
         await self._save_message_to_backend(user_msg)
         
         self.is_loading = True
-        yield
+        yield rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
         
         try:
             async with httpx.AsyncClient() as client:
@@ -226,6 +227,7 @@ class State(rx.State):
             await self._save_message_to_backend(err_msg)
         finally:
             self.is_loading = False
+            yield rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
 
     async def start_indexing(self):
         if not self.new_kb_name.strip():
