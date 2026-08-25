@@ -8,8 +8,8 @@ import os
 class QdrantVectorDB:
     def __init__(self):
         self.collection_name = settings.qdrant_collection_name
-        # Используем локальное хранилище вместо Docker!
-        db_path = os.path.join(os.getcwd(), "qdrant_storage")
+        # Используем локальное хранилище вместо Docker
+        db_path = os.path.join(os.getcwd(), "data", "qdrant_storage")
         self.client = QdrantClient(path=db_path)
         self._ensure_collection()
 

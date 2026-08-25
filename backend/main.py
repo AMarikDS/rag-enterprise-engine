@@ -36,7 +36,7 @@ class HistoryRequest(BaseModel):
     docs_dir: str
     message: dict
 
-HISTORY_FILE = "chat_history.json"
+HISTORY_FILE = os.path.join(os.getcwd(), "data", "chat_history.json")
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
