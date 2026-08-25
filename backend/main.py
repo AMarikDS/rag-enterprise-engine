@@ -95,7 +95,7 @@ def get_free_models():
     return {
         "models": [
             {"id": "gemini-3.6-flash", "name": "Gemini 3.6 Flash"},
-            {"id": "gemini-3.6-pro", "name": "Gemini 3.6 Pro"}
+            {"id": "gemini-3.7-flash", "name": "Gemini 3.7 Flash"}
         ]
     }
 
