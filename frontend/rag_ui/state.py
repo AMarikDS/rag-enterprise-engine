@@ -34,8 +34,8 @@ class State(rx.State):
     docs_dir: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "docs")
     chunk_size: int = 1000
     chunk_overlap: int = 200
-    selected_model: str = "gemini-3.6-flash"
-    available_models: list[str] = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-3.6-flash"]
+    selected_model: str = "gemini-1.5-flash"
+    available_models: list[str] = ["gemini-1.5-flash", "gemini-1.5-pro"]
     
     indexing_progress_val: int = 0
     indexing_status: str = ""
@@ -49,6 +49,9 @@ class State(rx.State):
 
     def set_new_kb_name(self, value: str):
         self.new_kb_name = value
+        
+    def set_current_kb_name(self, value: str):
+        self.current_kb_name = value
 
     def set_new_session_name(self, value: str):
         self.new_session_name = value
@@ -82,6 +85,7 @@ class State(rx.State):
         for s in self.sessions:
             if s["id"] == session_id:
                 self.current_kb_name = s.get("kb_name", "")
+                self.selected_model = s.get("model", "gemini-1.5-flash")
                 break
         await self.load_history()
 
@@ -92,7 +96,8 @@ class State(rx.State):
             async with httpx.AsyncClient() as client:
                 resp = await client.post(f"{API_URL}/sessions", json={
                     "name": self.new_session_name,
-                    "kb_name": self.current_kb_name
+                    "kb_name": self.current_kb_name,
+                    "model": self.selected_model
                 })
                 if resp.status_code == 200:
                     session_id = resp.json().get("session_id")

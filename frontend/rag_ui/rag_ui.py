@@ -59,6 +59,9 @@ def create_session_dialog() -> rx.Component:
                 rx.text("База Знаний", color="gray", font_size="14px", margin_top="10px"),
                 rx.select(State.kbs, placeholder="Выберите базу...", value=State.current_kb_name, on_change=State.set_current_kb_name, width="100%", color_scheme="cyan"),
                 
+                rx.text("Модель ИИ", color="gray", font_size="14px", margin_top="10px"),
+                rx.select(State.available_models, value=State.selected_model, on_change=State.set_selected_model, width="100%", color_scheme="cyan"),
+
                 rx.hstack(
                     rx.dialog.close(rx.button("Отмена", color_scheme="gray", cursor="pointer")),
                     rx.dialog.close(rx.button("Создать", on_click=State.create_session, color_scheme="cyan", cursor="pointer")),
@@ -98,14 +101,18 @@ def sidebar() -> rx.Component:
                             justify="start", 
                             cursor="pointer",
                             flex="1",
-                            padding_left="10px"
+                            padding_left="10px",
+                            overflow="hidden",
+                            white_space="nowrap"
                         ),
                         rx.button(
-                            rx.icon("trash", size=15), 
+                            "🗑️",
                             on_click=State.delete_session(s["id"]), 
                             variant="ghost", 
                             color_scheme="red", 
                             cursor="pointer",
+                            width="32px",
+                            height="32px",
                             padding="0"
                         ),
                         width="100%",
@@ -115,7 +122,7 @@ def sidebar() -> rx.Component:
                 ),
                 width="100%",
                 overflow_y="auto",
-                height="30vh"
+                flex="1" # takes up remaining space
             ),
             
             rx.divider(margin_y="20px"),
@@ -132,13 +139,15 @@ def sidebar() -> rx.Component:
                 rx.foreach(
                     State.kbs,
                     lambda kb: rx.hstack(
-                        rx.text(kb, color="white", flex="1", padding_left="10px", font_size="14px"),
+                        rx.text(kb, color="white", flex="1", padding_left="10px", font_size="14px", overflow="hidden", white_space="nowrap"),
                         rx.button(
-                            rx.icon("trash", size=15), 
+                            "🗑️",
                             on_click=State.delete_kb(kb), 
                             variant="ghost", 
                             color_scheme="red", 
                             cursor="pointer",
+                            width="32px",
+                            height="32px",
                             padding="0"
                         ),
                         width="100%",
@@ -148,12 +157,14 @@ def sidebar() -> rx.Component:
                 ),
                 width="100%",
                 overflow_y="auto",
-                max_height="25vh"
+                height="25vh"
             ),
-            width="280px",
+            width="100%",
+            height="100%",
             align_items="start"
         ),
-        height="calc(100vh - 40px)",
+        height="90vh",
+        width="320px",
         margin_right="20px"
     )
 
@@ -165,14 +176,14 @@ def index() -> rx.Component:
                 rx.vstack(
                     rx.cond(
                         State.current_session_id == "",
-                        rx.center(rx.text("Создайте или выберите диалог слева", color="gray"), height="60vh", width="100%"),
+                        rx.center(rx.text("Создайте или выберите диалог слева", color="gray"), height="100%", width="100%"),
                         rx.box(
                             rx.foreach(
                                 State.chat_history,
                                 lambda msg: chat_bubble(msg.text, msg.is_user, msg.sources)
                             ),
                             overflow_y="auto",
-                            height="70vh",
+                            flex="1",
                             width="100%",
                             display="flex",
                             flex_direction="column",
@@ -209,18 +220,20 @@ def index() -> rx.Component:
                         width="100%",
                         margin_top="20px"
                     ),
-                    width="100%"
+                    width="100%",
+                    height="100%"
                 ),
-                width="850px",
-                max_width="100%"
+                flex="1",
+                height="90vh"
             ),
             align_items="start",
             padding="20px",
             width="100%",
-            max_width="1250px"
+            max_width="1600px" # Fill the screen
         ),
         background="linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
         min_height="100vh",
+        width="100vw"
     )
 
 app = rx.App(

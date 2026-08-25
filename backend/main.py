@@ -21,7 +21,7 @@ indexing_progress = {
 
 class ChatRequest(BaseModel):
     query: str
-    model: str = "gemini-3.6-flash"
+    model: str = "gemini-1.5-flash"
     session_id: str
     kb_name: str
     
@@ -43,6 +43,7 @@ class HistoryRequest(BaseModel):
 class CreateSessionRequest(BaseModel):
     name: str
     kb_name: str
+    model: str = "gemini-1.5-flash"
 
 SESSIONS_FILE = os.path.join(os.getcwd(), "data", "sessions.json")
 
@@ -166,7 +167,8 @@ def get_sessions():
         result.append({
             "id": sid,
             "name": sdata.get("name", "New Chat"),
-            "kb_name": sdata.get("kb_name", "")
+            "kb_name": sdata.get("kb_name", ""),
+            "model": sdata.get("model", "gemini-1.5-flash")
         })
     return {"sessions": result}
 
@@ -177,6 +179,7 @@ def create_session(req: CreateSessionRequest):
     sessions[session_id] = {
         "name": req.name,
         "kb_name": req.kb_name,
+        "model": req.model,
         "messages": []
     }
     save_sessions(sessions)
