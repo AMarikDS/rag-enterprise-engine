@@ -1,3 +1,9 @@
+<div align="center">
+  <code>UmV0cmlldmFsLUF1Z21lbnRlZCBHZW5lcmF0aW9uIFN5c3RlbQ==</code>
+  <br/>
+  <i>(Retrieval-Augmented Generation System)</i>
+</div>
+
 # RAG System
 
 Мощная и гибкая система Retrieval-Augmented Generation (RAG) для умного поиска и диалога по вашей собственной базе документов (PDF). Проект разделен на современный Backend (FastAPI) и Frontend (Reflex).
@@ -67,10 +73,10 @@ docker compose up -d
 В новом окне терминала запустите API-сервер:
 
 ```bash
-python3 -m poetry run uvicorn backend.main:app --reload --port 8000
+python3 -m poetry run uvicorn backend.main:app --reload --port 8080
 ```
 
-Backend будет доступен по адресу: http://localhost:8000
+Backend будет доступен по адресу: http://localhost:8080
 
 ### 5. Запуск Frontend-интерфейса (Reflex)
 

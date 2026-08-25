@@ -4,7 +4,7 @@ import os
 from pydantic import BaseModel
 from typing import List
 
-API_URL = "http://localhost:8000/api"
+API_URL = "http://localhost:8080/api"
 
 class ChatMessage(BaseModel):
     text: str
