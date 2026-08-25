@@ -12,8 +12,23 @@ def create_kb_dialog() -> rx.Component:
             rx.dialog.description("Загрузите новую папку с документами.", color="gray"),
             
             rx.vstack(
-                rx.text("Название базы", color="gray", font_size="14px"),
-                rx.input(placeholder="Например, docs_2026", value=State.new_kb_name, on_change=State.set_new_kb_name, width="100%", color="white", background="rgba(0,0,0,0.2)"),
+                rx.tabs.root(
+                    rx.tabs.list(
+                        rx.tabs.trigger("Новая база", value="new", color="white"),
+                        rx.tabs.trigger("Существующая", value="existing", color="white"),
+                        margin_bottom="10px"
+                    ),
+                    rx.tabs.content(
+                        rx.input(placeholder="Название новой базы (напр. docs_2026)", value=State.new_kb_name, on_change=State.set_new_kb_name, width="100%", color="white", background="rgba(0,0,0,0.2)"),
+                        value="new"
+                    ),
+                    rx.tabs.content(
+                        rx.select(State.kbs, placeholder="Выберите базу для дополнения...", value=State.new_kb_name, on_change=State.set_new_kb_name, width="100%", color_scheme="cyan"),
+                        value="existing"
+                    ),
+                    default_value="new",
+                    width="100%",
+                ),
 
                 rx.text("Папка с документами", color="gray", font_size="14px", margin_top="10px"),
                 rx.input(value=State.docs_dir, on_change=State.set_docs_dir, width="100%", color="white", background="rgba(0,0,0,0.2)"),

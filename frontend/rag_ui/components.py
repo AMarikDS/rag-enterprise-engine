@@ -35,22 +35,46 @@ def navbar() -> rx.Component:
 def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Component:
     return rx.box(
         rx.vstack(
-            rx.text(text, color="white", font_size="16px"),
+            rx.cond(
+                is_user,
+                rx.text(text, color="white", font_size="16px"),
+                rx.markdown(
+                    text, 
+                    component_map={
+                        "p": lambda text: rx.text(text, color="white", font_size="16px", margin_bottom="10px"),
+                        "li": lambda text: rx.list_item(text, color="white", font_size="16px"),
+                    }
+                )
+            ),
             rx.cond(
                 sources,
-                rx.vstack(
-                    rx.text("Источники:", font_size="12px", color="gray", margin_top="10px"),
-                    rx.foreach(
-                        sources,
-                        lambda s: rx.box(
-                            rx.text(s, font_size="11px", color="rgba(255,255,255,0.7)"),
-                            background="rgba(0,0,0,0.3)",
-                            padding="5px",
-                            border_radius="5px",
-                            margin_top="5px",
-                        )
+                rx.accordion.root(
+                    rx.accordion.item(
+                        rx.accordion.header(
+                            rx.text("📚 Источники", font_size="12px", color="gray")
+                        ),
+                        rx.accordion.content(
+                            rx.vstack(
+                                rx.foreach(
+                                    sources,
+                                    lambda s: rx.box(
+                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.7)"),
+                                        background="rgba(0,0,0,0.3)",
+                                        padding="8px",
+                                        border_radius="5px",
+                                    )
+                                ),
+                                align_items="start",
+                                spacing="2"
+                            )
+                        ),
+                        value="sources",
+                        border="none"
                     ),
-                    align_items="start"
+                    type="single",
+                    collapsible=True,
+                    width="100%",
+                    margin_top="10px",
                 ),
             ),
             align_items="start"
