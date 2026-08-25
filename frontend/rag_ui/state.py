@@ -36,11 +36,10 @@ class State(rx.State):
     chunk_overlap: int = 200
     selected_model: str = "gemini-3.6-flash"
     available_models: list[str] = [
-        "gemini-3.7-flash",
-        "gemini-3.6-flash",
-        "gemini-3.5-flash",
-        "gemini-flash-latest",
-        "gemini-2.5-pro"
+        "gemini-3.7-flash (⚡️ Рекомендуемая, быстрая)",
+        "gemini-2.5-pro (🧠 Мощная, для сложных задач)",
+        "gemini-3.6-flash (Стабильная)",
+        "gemini-flash-latest (Автообновляемая)"
     ]
     
     indexing_progress_val: int = 0
@@ -91,7 +90,12 @@ class State(rx.State):
         for s in self.sessions:
             if s["id"] == session_id:
                 self.current_kb_name = s.get("kb_name", "")
-                self.selected_model = s.get("model", "gemini-3.6-flash")
+                actual_model = s.get("model", "gemini-3.6-flash")
+                self.selected_model = self.available_models[0]
+                for m in self.available_models:
+                    if m.startswith(actual_model):
+                        self.selected_model = m
+                        break
                 break
         await self.load_history()
         return rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
@@ -104,7 +108,7 @@ class State(rx.State):
                 resp = await client.post(f"{API_URL}/sessions", json={
                     "name": self.new_session_name,
                     "kb_name": self.current_kb_name,
-                    "model": self.selected_model
+                    "model": self.selected_model.split(" ")[0]
                 })
                 if resp.status_code == 200:
                     session_id = resp.json().get("session_id")
@@ -129,10 +133,11 @@ class State(rx.State):
         self.selected_model = model
         if self.current_session_id:
             try:
+                actual_model = model.split(" ")[0]
                 async with httpx.AsyncClient() as client:
                     await client.patch(
                         f"{API_URL}/sessions/{self.current_session_id}/model",
-                        json={"model": model}
+                        json={"model": actual_model}
                     )
             except Exception as e:
                 print(f"Failed to update session model: {e}")
@@ -207,11 +212,12 @@ class State(rx.State):
         
         try:
             async with httpx.AsyncClient() as client:
+                actual_model = self.selected_model.split(" ")[0]
                 response = await client.post(
                     f"{API_URL}/chat", 
                     json={
                         "query": query, 
-                        "model": self.selected_model,
+                        "model": actual_model,
                         "session_id": self.current_session_id,
                         "kb_name": self.current_kb_name
                     },
