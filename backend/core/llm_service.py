@@ -1,11 +1,11 @@
 from google import genai
 from google.genai import types
-from app.core.config import settings
+from backend.core.config import settings
 
 class LLMService:
     def __init__(self):
         self.client = genai.Client(api_key=settings.gemini_api_key)
-        self.embedding_model = "text-embedding-004"
+        self.embedding_model = "gemini-embedding-2"
         
     def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
         response = self.client.models.embed_content(
