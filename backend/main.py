@@ -1,8 +1,9 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 import os
 import json
+import uuid
 
 from backend.core.config import settings
 from backend.core.llm_service import llm_service
@@ -21,6 +22,8 @@ indexing_progress = {
 class ChatRequest(BaseModel):
     query: str
     model: str = "gemini-3.6-flash"
+    session_id: str
+    kb_name: str
     
 class SettingsUpdateRequest(BaseModel):
     docs_dir: str
@@ -28,27 +31,32 @@ class SettingsUpdateRequest(BaseModel):
     chunk_overlap: int
 
 class IndexRequest(BaseModel):
+    kb_name: str
     docs_dir: Optional[str] = None
     chunk_size: Optional[int] = None
     chunk_overlap: Optional[int] = None
 
 class HistoryRequest(BaseModel):
-    docs_dir: str
+    session_id: str
     message: dict
 
-HISTORY_FILE = os.path.join(os.getcwd(), "data", "chat_history.json")
+class CreateSessionRequest(BaseModel):
+    name: str
+    kb_name: str
 
-def load_history():
-    if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+SESSIONS_FILE = os.path.join(os.getcwd(), "data", "sessions.json")
+
+def load_sessions() -> dict:
+    if os.path.exists(SESSIONS_FILE):
+        with open(SESSIONS_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
 
-def save_history(history):
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, ensure_ascii=False, indent=2)
+def save_sessions(sessions: dict):
+    with open(SESSIONS_FILE, "w", encoding="utf-8") as f:
+        json.dump(sessions, f, ensure_ascii=False, indent=2)
 
-def process_indexing_background(docs_dir: str, chunk_size: int, chunk_overlap: int):
+def process_indexing_background(kb_name: str, docs_dir: str, chunk_size: int, chunk_overlap: int):
     global indexing_progress
     try:
         indexing_progress["status"] = "processing"
@@ -71,17 +79,18 @@ def process_indexing_background(docs_dir: str, chunk_size: int, chunk_overlap: i
             indexing_progress["processed"] = min(i + batch_size, len(texts))
             
         indexing_progress["message"] = "Сохранение в БД..."
-        qdrant_db.add_chunks(texts, all_embeddings, metadatas)
+        qdrant_db.add_chunks(kb_name, texts, all_embeddings, metadatas)
         
         indexing_progress["status"] = "done"
         indexing_progress["message"] = f"Готово: {len(texts)} чанков!"
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         indexing_progress["status"] = "error"
         indexing_progress["message"] = str(e)
 
 @app.get("/api/models")
 def get_free_models():
-    # Provide a list of free models available in Gemini
     return {
         "models": [
             {"id": "gemini-3.6-flash", "name": "Gemini 3.6 Flash"},
@@ -96,6 +105,19 @@ def update_settings(req: SettingsUpdateRequest):
     settings.default_chunk_size = req.chunk_size
     settings.default_chunk_overlap = req.chunk_overlap
     return {"status": "ok", "message": "Settings updated temporarily (in-memory)."}
+
+@app.get("/api/kb")
+def get_knowledge_bases():
+    try:
+        kbs = qdrant_db.get_collections()
+        return {"kbs": kbs}
+    except Exception as e:
+        return {"kbs": []}
+
+@app.delete("/api/kb/{kb_name}")
+def delete_knowledge_base(kb_name: str):
+    qdrant_db.delete_collection(kb_name)
+    return {"status": "ok"}
 
 @app.get("/api/index/progress")
 def get_indexing_progress():
@@ -113,14 +135,14 @@ def index_documents(req: IndexRequest, background_tasks: BackgroundTasks):
     if indexing_progress["status"] == "processing":
         return {"status": "processing", "message": "Индексация уже идет"}
         
-    background_tasks.add_task(process_indexing_background, docs_dir, chunk_size, chunk_overlap)
+    background_tasks.add_task(process_indexing_background, req.kb_name, docs_dir, chunk_size, chunk_overlap)
     return {"status": "started", "message": "Запуск индексации..."}
 
 @app.post("/api/chat")
 def chat(req: ChatRequest):
     try:
         query_vector = llm_service.generate_embeddings([req.query])[0]
-        search_results = qdrant_db.search(query_vector=query_vector, limit=3)
+        search_results = qdrant_db.search(collection_name=req.kb_name, query_vector=query_vector, limit=3)
         
         context_chunks = [hit.payload.get("text", "") for hit in search_results if hit.payload]
         
@@ -135,16 +157,50 @@ def chat(req: ChatRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/sessions")
+def get_sessions():
+    sessions = load_sessions()
+    # return list without full message history
+    result = []
+    for sid, sdata in sessions.items():
+        result.append({
+            "id": sid,
+            "name": sdata.get("name", "New Chat"),
+            "kb_name": sdata.get("kb_name", "")
+        })
+    return {"sessions": result}
+
+@app.post("/api/sessions")
+def create_session(req: CreateSessionRequest):
+    sessions = load_sessions()
+    session_id = str(uuid.uuid4())
+    sessions[session_id] = {
+        "name": req.name,
+        "kb_name": req.kb_name,
+        "messages": []
+    }
+    save_sessions(sessions)
+    return {"session_id": session_id}
+
+@app.delete("/api/sessions/{session_id}")
+def delete_session(session_id: str):
+    sessions = load_sessions()
+    if session_id in sessions:
+        del sessions[session_id]
+        save_sessions(sessions)
+    return {"status": "ok"}
+
 @app.get("/api/history")
-def get_history(docs_dir: str):
-    history = load_history()
-    return {"history": history.get(docs_dir, [])}
+def get_history(session_id: str):
+    sessions = load_sessions()
+    sdata = sessions.get(session_id, {})
+    return {"history": sdata.get("messages", [])}
 
 @app.post("/api/history")
 def append_history(req: HistoryRequest):
-    history = load_history()
-    if req.docs_dir not in history:
-        history[req.docs_dir] = []
-    history[req.docs_dir].append(req.message)
-    save_history(history)
+    sessions = load_sessions()
+    if req.session_id not in sessions:
+        sessions[req.session_id] = {"name": "Chat", "kb_name": "", "messages": []}
+    sessions[req.session_id]["messages"].append(req.message)
+    save_sessions(sessions)
     return {"status": "ok"}

@@ -7,20 +7,19 @@ import os
 
 class QdrantVectorDB:
     def __init__(self):
-        self.collection_name = settings.qdrant_collection_name
         # Используем локальное хранилище вместо Docker
         db_path = os.path.join(os.getcwd(), "data", "qdrant_storage")
         self.client = QdrantClient(path=db_path)
-        self._ensure_collection()
 
-    def _ensure_collection(self):
-        if not self.client.collection_exists(self.collection_name):
+    def _ensure_collection(self, collection_name: str):
+        if not self.client.collection_exists(collection_name):
             self.client.create_collection(
-                collection_name=self.collection_name,
+                collection_name=collection_name,
                 vectors_config=VectorParams(size=384, distance=Distance.COSINE),
             )
 
-    def add_chunks(self, chunks: list[str], embeddings: list[list[float]], metadata: list[dict]):
+    def add_chunks(self, collection_name: str, chunks: list[str], embeddings: list[list[float]], metadata: list[dict]):
+        self._ensure_collection(collection_name)
         points = []
         for i, (chunk, vector, meta) in enumerate(zip(chunks, embeddings, metadata)):
             point_id = str(uuid.uuid4())
@@ -32,21 +31,27 @@ class QdrantVectorDB:
                 )
             )
         self.client.upsert(
-            collection_name=self.collection_name,
+            collection_name=collection_name,
             points=points
         )
 
-    def search(self, query_vector: list[float], limit: int = 5):
+    def search(self, collection_name: str, query_vector: list[float], limit: int = 5):
+        if not self.client.collection_exists(collection_name):
+            return []
+            
         response = self.client.query_points(
-            collection_name=self.collection_name,
+            collection_name=collection_name,
             query=query_vector,
             limit=limit
         )
         return response.points
 
-    def get_collection_info(self):
-        if self.client.collection_exists(self.collection_name):
-            return self.client.get_collection(self.collection_name)
-        return None
+    def get_collections(self) -> list[str]:
+        response = self.client.get_collections()
+        return [col.name for col in response.collections]
+        
+    def delete_collection(self, collection_name: str):
+        if self.client.collection_exists(collection_name):
+            self.client.delete_collection(collection_name)
 
 qdrant_db = QdrantVectorDB()
