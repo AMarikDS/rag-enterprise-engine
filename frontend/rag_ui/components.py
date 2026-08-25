@@ -16,7 +16,7 @@ def glass_box(*children, **props) -> rx.Component:
 def navbar() -> rx.Component:
     return glass_box(
         rx.hstack(
-            rx.heading("🧠 RAG System", size="6", color="white", font_family="Inter"),
+            rx.heading("RAG System", size="6", color="white", font_family="Inter"),
             rx.spacer(),
             rx.link(
                 rx.button("Чат", variant="soft", color_scheme="cyan", size="3"),

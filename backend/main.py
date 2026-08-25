@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import os
+import json
 
 from backend.core.config import settings
 from backend.core.llm_service import llm_service
@@ -23,6 +24,22 @@ class IndexRequest(BaseModel):
     docs_dir: Optional[str] = None
     chunk_size: Optional[int] = None
     chunk_overlap: Optional[int] = None
+
+class HistoryRequest(BaseModel):
+    docs_dir: str
+    message: dict
+
+HISTORY_FILE = "chat_history.json"
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def save_history(history):
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
 
 @app.get("/api/models")
 def get_free_models():
@@ -84,3 +101,17 @@ def chat(req: ChatRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/history")
+def get_history(docs_dir: str):
+    history = load_history()
+    return {"history": history.get(docs_dir, [])}
+
+@app.post("/api/history")
+def append_history(req: HistoryRequest):
+    history = load_history()
+    if req.docs_dir not in history:
+        history[req.docs_dir] = []
+    history[req.docs_dir].append(req.message)
+    save_history(history)
+    return {"status": "ok"}

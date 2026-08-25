@@ -33,6 +33,21 @@ class State(rx.State):
     def set_docs_dir(self, value: str):
         self.docs_dir = value
 
+    async def load_history(self):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f"{API_URL}/history", params={"docs_dir": self.docs_dir})
+                if response.status_code == 200:
+                    data = response.json().get("history", [])
+                    self.chat_history = [
+                        ChatMessage(text=m["text"], is_user=m["is_user"], sources=m.get("sources", []))
+                        for m in data
+                    ]
+                else:
+                    self.chat_history = []
+        except Exception:
+            pass
+
     def set_chunk_size(self, value: int | list[int]):
         self.chunk_size = value[0] if isinstance(value, list) else value
 
@@ -46,13 +61,29 @@ class State(rx.State):
         if key == "Enter":
             return State.send_message()
 
+    async def _save_message_to_backend(self, msg: ChatMessage):
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.post(
+                    f"{API_URL}/history",
+                    json={
+                        "docs_dir": self.docs_dir,
+                        "message": {"text": msg.text, "is_user": msg.is_user, "sources": msg.sources}
+                    }
+                )
+        except Exception:
+            pass
+
     async def send_message(self):
         if not self.current_query.strip():
             return
             
         query = self.current_query
         self.current_query = ""
-        self.chat_history.append(ChatMessage(text=query, is_user=True))
+        user_msg = ChatMessage(text=query, is_user=True)
+        self.chat_history.append(user_msg)
+        await self._save_message_to_backend(user_msg)
+        
         self.is_loading = True
         yield
         
@@ -66,20 +97,17 @@ class State(rx.State):
                 response.raise_for_status()
                 data = response.json()
                 
-                self.chat_history.append(
-                    ChatMessage(
-                        text=data["answer"], 
-                        is_user=False, 
-                        sources=data.get("sources", [])
-                    )
+                bot_msg = ChatMessage(
+                    text=data["answer"], 
+                    is_user=False, 
+                    sources=data.get("sources", [])
                 )
+                self.chat_history.append(bot_msg)
+                await self._save_message_to_backend(bot_msg)
         except Exception as e:
-            self.chat_history.append(
-                ChatMessage(
-                    text=f"Error: {str(e)}", 
-                    is_user=False
-                )
-            )
+            err_msg = ChatMessage(text=f"Error: {str(e)}", is_user=False)
+            self.chat_history.append(err_msg)
+            await self._save_message_to_backend(err_msg)
         finally:
             self.is_loading = False
 
@@ -94,6 +122,8 @@ class State(rx.State):
                         "chunk_overlap": self.chunk_overlap
                     }
                 )
+            # Load history just in case the directory was changed
+            await self.load_history()
         except Exception as e:
             print(f"Failed to update settings: {e}")
 
