@@ -78,7 +78,7 @@ Backend будет доступен по адресу: http://localhost:8000
 
 ```bash
 cd frontend
-python3 -m poetry run reflex run --port 3000
+python3 -m poetry run reflex run --frontend-port 3000
 ```
 
 Веб-интерфейс будет доступен по адресу: http://localhost:3000
