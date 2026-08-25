@@ -1,15 +1,15 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
-import os
-import json
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 
-from backend.core.config import settings
-from backend.core.llm_service import llm_service
-from backend.core.qdrant_client import qdrant_db
-from backend.core.document_processor import DocumentProcessor
+# ...
 
 app = FastAPI(title="RAG Backend API")
+
+indexing_progress = {
+    "status": "idle",
+    "total": 0,
+    "processed": 0,
+    "message": ""
+}
 
 class ChatRequest(BaseModel):
     query: str
@@ -41,6 +41,37 @@ def save_history(history):
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
+def process_indexing_background(docs_dir: str, chunk_size: int, chunk_overlap: int):
+    global indexing_progress
+    try:
+        indexing_progress["status"] = "processing"
+        indexing_progress["message"] = "Чтение файлов..."
+        indexing_progress["total"] = 0
+        indexing_progress["processed"] = 0
+        
+        processor = DocumentProcessor(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        texts, metadatas = processor.process_directory(docs_dir)
+        
+        indexing_progress["total"] = len(texts)
+        indexing_progress["message"] = "Векторизация..."
+        
+        batch_size = 100
+        all_embeddings = []
+        for i in range(0, len(texts), batch_size):
+            batch_texts = texts[i:i+batch_size]
+            embeddings = llm_service.generate_embeddings(batch_texts)
+            all_embeddings.extend(embeddings)
+            indexing_progress["processed"] = min(i + batch_size, len(texts))
+            
+        indexing_progress["message"] = "Сохранение в БД..."
+        qdrant_db.add_chunks(texts, all_embeddings, metadatas)
+        
+        indexing_progress["status"] = "done"
+        indexing_progress["message"] = f"Готово: {len(texts)} чанков!"
+    except Exception as e:
+        indexing_progress["status"] = "error"
+        indexing_progress["message"] = str(e)
+
 @app.get("/api/models")
 def get_free_models():
     # Provide a list of free models available in Gemini
@@ -59,8 +90,12 @@ def update_settings(req: SettingsUpdateRequest):
     settings.default_chunk_overlap = req.chunk_overlap
     return {"status": "ok", "message": "Settings updated temporarily (in-memory)."}
 
+@app.get("/api/index/progress")
+def get_indexing_progress():
+    return indexing_progress
+
 @app.post("/api/index")
-def index_documents(req: IndexRequest):
+def index_documents(req: IndexRequest, background_tasks: BackgroundTasks):
     docs_dir = req.docs_dir or settings.default_docs_dir
     chunk_size = req.chunk_size or settings.default_chunk_size
     chunk_overlap = req.chunk_overlap or settings.default_chunk_overlap
@@ -68,22 +103,11 @@ def index_documents(req: IndexRequest):
     if not os.path.exists(docs_dir):
         raise HTTPException(status_code=400, detail="Directory not found.")
         
-    try:
-        processor = DocumentProcessor(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-        texts, metadatas = processor.process_directory(docs_dir)
+    if indexing_progress["status"] == "processing":
+        return {"status": "processing", "message": "Индексация уже идет"}
         
-        import time
-        batch_size = 100
-        all_embeddings = []
-        for i in range(0, len(texts), batch_size):
-            batch_texts = texts[i:i+batch_size]
-            embeddings = llm_service.generate_embeddings(batch_texts)
-            all_embeddings.extend(embeddings)
-            
-        qdrant_db.add_chunks(texts, all_embeddings, metadatas)
-        return {"status": "ok", "message": f"Successfully indexed {len(texts)} chunks."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    background_tasks.add_task(process_indexing_background, docs_dir, chunk_size, chunk_overlap)
+    return {"status": "started", "message": "Запуск индексации..."}
 
 @app.post("/api/chat")
 def chat(req: ChatRequest):
