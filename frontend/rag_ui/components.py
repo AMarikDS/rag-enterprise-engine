@@ -51,23 +51,21 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
                 rx.accordion.root(
                     rx.accordion.item(
                         rx.accordion.header(
-                            rx.text("Источники", font_size="12px", color="rgba(255,255,255,0.6)", font_weight="500")
+                            rx.text("Источники", font_size="12px", color="rgba(255,255,255,0.7)", font_weight="bold")
                         ),
                         rx.accordion.content(
                             rx.vstack(
                                 rx.foreach(
                                     sources,
                                     lambda s: rx.box(
-                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.8)", line_height="1.5"),
-                                        background="rgba(255,255,255,0.05)",
-                                        border="1px solid rgba(255,255,255,0.1)",
-                                        padding="10px",
-                                        border_radius="8px",
+                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.7)", line_height="1.5"),
+                                        padding_y="4px",
+                                        border_bottom="1px solid rgba(255,255,255,0.05)",
                                         width="100%",
                                     )
                                 ),
                                 align_items="start",
-                                spacing="2",
+                                spacing="1",
                                 width="100%",
                             )
                         ),
