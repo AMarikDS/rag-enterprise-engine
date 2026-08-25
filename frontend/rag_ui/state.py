@@ -41,6 +41,11 @@ class State(rx.State):
 
     def set_selected_model(self, value: str):
         self.selected_model = value
+
+    def on_key_down(self, key: str):
+        if key == "Enter":
+            return State.send_message()
+
     async def send_message(self):
         if not self.current_query.strip():
             return

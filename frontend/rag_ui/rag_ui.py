@@ -29,10 +29,7 @@ def index() -> rx.Component:
                             placeholder="Задайте вопрос по документам...",
                             value=State.current_query,
                             on_change=State.set_current_query,
-                            on_key_down=rx.cond(
-                                rx.args[0].key == "Enter",
-                                State.send_message
-                            ),
+                            on_key_down=State.on_key_down,
                             width="100%",
                             size="3",
                             variant="surface",
