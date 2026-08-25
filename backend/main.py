@@ -72,13 +72,28 @@ def index_documents(req: IndexRequest):
         processor = DocumentProcessor(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         texts, metadatas = processor.process_directory(docs_dir)
         
+        import time
         # We need to batch embeddings generation if there are many texts
         batch_size = 100
         all_embeddings = []
         for i in range(0, len(texts), batch_size):
             batch_texts = texts[i:i+batch_size]
-            embeddings = llm_service.generate_embeddings(batch_texts)
-            all_embeddings.extend(embeddings)
+            
+            # Ретрай логика на случай Rate Limit (429)
+            retries = 3
+            for attempt in range(retries):
+                try:
+                    embeddings = llm_service.generate_embeddings(batch_texts)
+                    all_embeddings.extend(embeddings)
+                    break
+                except Exception as e:
+                    if "429" in str(e) and attempt < retries - 1:
+                        time.sleep(5 * (attempt + 1))
+                    else:
+                        raise e
+            
+            # Задержка между батчами, чтобы не превысить 15 запросов в минуту
+            time.sleep(2)
             
         qdrant_db.add_chunks(texts, all_embeddings, metadatas)
         return {"status": "ok", "message": f"Successfully indexed {len(texts)} chunks."}
