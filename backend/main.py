@@ -94,8 +94,11 @@ def process_indexing_background(kb_name: str, docs_dir: str, chunk_size: int, ch
 def get_free_models():
     return {
         "models": [
+            {"id": "gemini-3.7-flash", "name": "Gemini 3.7 Flash"},
             {"id": "gemini-3.6-flash", "name": "Gemini 3.6 Flash"},
-            {"id": "gemini-3.7-flash", "name": "Gemini 3.7 Flash"}
+            {"id": "gemini-3.5-flash", "name": "Gemini 3.5 Flash"},
+            {"id": "gemini-flash-latest", "name": "Gemini Flash Latest"},
+            {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro"}
         ]
     }
 

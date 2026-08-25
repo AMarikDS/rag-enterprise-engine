@@ -35,7 +35,13 @@ class State(rx.State):
     chunk_size: int = 1000
     chunk_overlap: int = 200
     selected_model: str = "gemini-3.6-flash"
-    available_models: list[str] = ["gemini-3.6-flash", "gemini-3.7-flash"]
+    available_models: list[str] = [
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-flash-latest",
+        "gemini-2.5-pro"
+    ]
     
     indexing_progress_val: int = 0
     indexing_status: str = ""
