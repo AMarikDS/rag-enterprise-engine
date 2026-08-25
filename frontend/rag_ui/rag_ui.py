@@ -192,18 +192,38 @@ def index() -> rx.Component:
                     rx.cond(
                         State.current_session_id == "",
                         rx.center(rx.text("Создайте или выберите диалог слева", color="gray"), height="100%", width="100%"),
-                        rx.box(
-                            rx.foreach(
-                                State.chat_history,
-                                lambda msg: chat_bubble(msg.text, msg.is_user, msg.sources)
+                        rx.vstack(
+                            rx.hstack(
+                                rx.text("Используемая модель:", color="gray", font_size="13px", font_weight="500"),
+                                rx.select(
+                                    State.available_models,
+                                    value=State.selected_model,
+                                    on_change=State.update_selected_model,
+                                    size="1",
+                                    color_scheme="cyan",
+                                    variant="soft"
+                                ),
+                                width="100%",
+                                padding_bottom="10px",
+                                border_bottom="1px solid rgba(255,255,255,0.1)",
+                                align_items="center",
+                                margin_bottom="10px"
                             ),
-                            id="chat_history_box",
-                            overflow_y="auto",
-                            flex="1",
+                            rx.box(
+                                rx.foreach(
+                                    State.chat_history,
+                                    lambda msg: chat_bubble(msg.text, msg.is_user, msg.sources)
+                                ),
+                                id="chat_history_box",
+                                overflow_y="auto",
+                                flex="1",
+                                width="100%",
+                                display="flex",
+                                flex_direction="column",
+                                padding="10px"
+                            ),
                             width="100%",
-                            display="flex",
-                            flex_direction="column",
-                            padding="10px"
+                            height="100%"
                         )
                     ),
                     rx.cond(

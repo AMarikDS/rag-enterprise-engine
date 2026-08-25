@@ -125,6 +125,18 @@ class State(rx.State):
         except Exception:
             pass
 
+    async def update_selected_model(self, model: str):
+        self.selected_model = model
+        if self.current_session_id:
+            try:
+                async with httpx.AsyncClient() as client:
+                    await client.patch(
+                        f"{API_URL}/sessions/{self.current_session_id}/model",
+                        json={"model": model}
+                    )
+            except Exception as e:
+                print(f"Failed to update session model: {e}")
+
     async def delete_kb(self, kb_name: str):
         try:
             async with httpx.AsyncClient() as client:

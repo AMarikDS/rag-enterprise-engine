@@ -45,6 +45,9 @@ class CreateSessionRequest(BaseModel):
     kb_name: str
     model: str = "gemini-3.6-flash"
 
+class UpdateSessionModelRequest(BaseModel):
+    model: str
+
 SESSIONS_FILE = os.path.join(os.getcwd(), "data", "sessions.json")
 
 def load_sessions() -> dict:
@@ -210,6 +213,15 @@ def delete_session(session_id: str):
         del sessions[session_id]
         save_sessions(sessions)
     return {"status": "ok"}
+
+@app.patch("/api/sessions/{session_id}/model")
+def update_session_model(session_id: str, req: UpdateSessionModelRequest):
+    sessions = load_sessions()
+    if session_id in sessions:
+        sessions[session_id]["model"] = req.model
+        save_sessions(sessions)
+        return {"status": "ok"}
+    raise HTTPException(status_code=404, detail="Чат не найден")
 
 @app.get("/api/history")
 def get_history(session_id: str):
