@@ -5,7 +5,7 @@ from .components import glass_box, chat_bubble
 def create_kb_dialog() -> rx.Component:
     return rx.dialog.root(
         rx.dialog.trigger(
-            rx.button("Новая База Знаний", variant="soft", color_scheme="cyan", size="3", cursor="pointer", width="100%", margin_top="10px")
+            rx.button("+ Новая База Знаний", variant="soft", color_scheme="cyan", size="2", cursor="pointer", width="100%", margin_bottom="10px")
         ),
         rx.dialog.content(
             rx.dialog.title("Индексация новой базы", color="white"),
@@ -45,26 +45,72 @@ def create_kb_dialog() -> rx.Component:
         )
     )
 
+def create_session_dialog() -> rx.Component:
+    return rx.dialog.root(
+        rx.dialog.trigger(
+            rx.button("+ Новый чат", variant="soft", color_scheme="cyan", size="2", cursor="pointer", width="100%", margin_bottom="10px")
+        ),
+        rx.dialog.content(
+            rx.dialog.title("Создание нового чата", color="white"),
+            rx.vstack(
+                rx.text("Название чата", color="gray", font_size="14px"),
+                rx.input(placeholder="Например, Вопросы по договору...", value=State.new_session_name, on_change=State.set_new_session_name, width="100%", color="white", background="rgba(0,0,0,0.2)"),
+                
+                rx.text("База Знаний", color="gray", font_size="14px", margin_top="10px"),
+                rx.select(State.kbs, placeholder="Выберите базу...", value=State.current_kb_name, on_change=State.set_current_kb_name, width="100%", color_scheme="cyan"),
+                
+                rx.hstack(
+                    rx.dialog.close(rx.button("Отмена", color_scheme="gray", cursor="pointer")),
+                    rx.dialog.close(rx.button("Создать", on_click=State.create_session, color_scheme="cyan", cursor="pointer")),
+                    spacing="4",
+                    margin_top="15px"
+                ),
+                width="100%",
+                align_items="start"
+            ),
+            background="#1e293b",
+            border="1px solid rgba(255, 255, 255, 0.1)",
+        )
+    )
+
 def sidebar() -> rx.Component:
     return glass_box(
         rx.vstack(
-            rx.heading("RAG System", size="6", color="white", font_family="Inter", margin_bottom="20px"),
+            rx.heading("RAG System", size="6", color="white", font_family="Inter", margin_bottom="20px", text_align="center", width="100%"),
             
-            rx.heading("Диалоги", size="4", color="white"),
-            rx.vstack(
-                rx.input(placeholder="Название чата...", value=State.new_session_name, on_change=State.set_new_session_name, size="2", background="rgba(0,0,0,0.2)", color="white", width="100%"),
-                rx.select(State.kbs, placeholder="Выберите базу...", value=State.current_kb_name, on_change=lambda x: State.setvar("current_kb_name", x), size="2", color_scheme="cyan", width="100%"),
-                rx.button("Создать чат", on_click=State.create_session, size="2", color_scheme="cyan", width="100%", cursor="pointer"),
-                width="100%"
+            rx.hstack(
+                rx.heading("Диалоги", size="4", color="white"),
+                rx.spacer(),
+                width="100%",
+                align_items="center",
+                margin_bottom="10px"
             ),
-            rx.divider(margin_y="10px"),
+            create_session_dialog(),
             rx.vstack(
                 rx.foreach(
                     State.sessions,
                     lambda s: rx.hstack(
-                        rx.button(s["name"], on_click=State.select_session(s["id"]), variant=rx.cond(s["id"] == State.current_session_id, "solid", "ghost"), color_scheme="cyan", width="100%", justify="start", cursor="pointer"),
-                        rx.button(rx.icon("trash", size=15), on_click=State.delete_session(s["id"]), variant="ghost", color_scheme="red", cursor="pointer"),
-                        width="100%"
+                        rx.button(
+                            s["name"], 
+                            on_click=State.select_session(s["id"]), 
+                            variant=rx.cond(s["id"] == State.current_session_id, "solid", "ghost"), 
+                            color_scheme="cyan", 
+                            justify="start", 
+                            cursor="pointer",
+                            flex="1",
+                            padding_left="10px"
+                        ),
+                        rx.button(
+                            rx.icon("trash", size=15), 
+                            on_click=State.delete_session(s["id"]), 
+                            variant="ghost", 
+                            color_scheme="red", 
+                            cursor="pointer",
+                            padding="0"
+                        ),
+                        width="100%",
+                        align_items="center",
+                        spacing="2"
                     )
                 ),
                 width="100%",
@@ -74,24 +120,37 @@ def sidebar() -> rx.Component:
             
             rx.divider(margin_y="20px"),
             
-            rx.heading("Базы Знаний", size="4", color="white"),
+            rx.hstack(
+                rx.heading("Базы Знаний", size="4", color="white"),
+                rx.spacer(),
+                width="100%",
+                align_items="center",
+                margin_bottom="10px"
+            ),
+            create_kb_dialog(),
             rx.vstack(
                 rx.foreach(
                     State.kbs,
                     lambda kb: rx.hstack(
-                        rx.text(kb, color="white"),
-                        rx.spacer(),
-                        rx.button(rx.icon("trash", size=15), on_click=State.delete_kb(kb), variant="ghost", color_scheme="red", cursor="pointer"),
+                        rx.text(kb, color="white", flex="1", padding_left="10px", font_size="14px"),
+                        rx.button(
+                            rx.icon("trash", size=15), 
+                            on_click=State.delete_kb(kb), 
+                            variant="ghost", 
+                            color_scheme="red", 
+                            cursor="pointer",
+                            padding="0"
+                        ),
                         width="100%",
-                        align_items="center"
+                        align_items="center",
+                        spacing="2"
                     )
                 ),
                 width="100%",
                 overflow_y="auto",
-                max_height="20vh"
+                max_height="25vh"
             ),
-            create_kb_dialog(),
-            width="300px",
+            width="280px",
             align_items="start"
         ),
         height="calc(100vh - 40px)",
@@ -152,13 +211,13 @@ def index() -> rx.Component:
                     ),
                     width="100%"
                 ),
-                width="800px",
+                width="850px",
                 max_width="100%"
             ),
             align_items="start",
             padding="20px",
             width="100%",
-            max_width="1200px"
+            max_width="1250px"
         ),
         background="linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
         min_height="100vh",
