@@ -212,6 +212,7 @@ def index() -> rx.Component:
                     ),
                     rx.hstack(
                         rx.text_area(
+                            id="query_input",
                             placeholder="Задайте вопрос... (Enter - отправить, Shift+Enter - перенос)",
                             value=State.current_query,
                             on_change=State.set_current_query,
@@ -237,7 +238,8 @@ def index() -> rx.Component:
                             disabled=State.current_session_id == ""
                         ),
                         width="100%",
-                        margin_top="20px"
+                        margin_top="20px",
+                        align_items="center"
                     ),
                     width="100%",
                     height="100%"

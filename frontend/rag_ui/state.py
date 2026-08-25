@@ -191,6 +191,7 @@ class State(rx.State):
         
         self.is_loading = True
         yield rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
+        yield rx.set_value("query_input", "")
         
         try:
             async with httpx.AsyncClient() as client:
