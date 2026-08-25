@@ -13,18 +13,26 @@ class LLMService:
         embeddings = list(self.embedding_model.embed(texts))
         return [emb.tolist() for emb in embeddings]
 
-    def generate_answer(self, query: str, context: list[str], model: str = "gemini-2.5-flash") -> str:
+    def generate_answer(self, query: str, context: list[str], model: str = "gemini-3.6-flash", history: list[dict] = None) -> str:
         context_str = "\n\n".join(context)
+        history_str = ""
+        if history:
+            for msg in history:
+                role = "Пользователь" if msg.get("is_user") else "Ассистент"
+                history_str += f"{role}: {msg.get('text')}\n"
+                
         prompt = f"""
-Вы — вежливый интеллектуальный помощник. 
-Ваша задача — отвечать на вопросы пользователя, опираясь на предоставленный контекст.
-Если пользователь просто здоровается, ответьте вежливо и предложите помощь.
-Если задан вопрос по сути, но в контексте нет ответа, честно скажите, что не нашли информации в документах.
+Вы — интеллектуальный помощник.
+Ваша задача — отвечать на вопросы пользователя, опираясь на предоставленный контекст и историю диалога.
+Ведите диалог естественно. НЕ здоровайтесь в каждом сообщении.
 
-Контекст:
-{context_str}
+История диалога (последние сообщения):
+{history_str if history_str else "Нет (это начало диалога)"}
 
-Запрос пользователя:
+Контекст из базы знаний:
+{context_str if context_str else "Контекст не найден."}
+
+Текущий запрос пользователя:
 {query}
 """
         response = self.client.models.generate_content(

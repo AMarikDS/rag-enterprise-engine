@@ -144,12 +144,21 @@ def index_documents(req: IndexRequest, background_tasks: BackgroundTasks):
 @app.post("/api/chat")
 def chat(req: ChatRequest):
     try:
+        sessions = load_sessions()
+        session_data = sessions.get(req.session_id, {})
+        history = session_data.get("messages", [])[-6:] # Последние 6 сообщений для контекста
+        
         query_vector = llm_service.generate_embeddings([req.query])[0]
         search_results = qdrant_db.search(collection_name=req.kb_name, query_vector=query_vector, limit=3)
         
         context_chunks = [hit.payload.get("text", "") for hit in search_results if hit.payload]
         
-        answer = llm_service.generate_answer(query=req.query, context=context_chunks, model=req.model)
+        answer = llm_service.generate_answer(
+            query=req.query, 
+            context=context_chunks, 
+            model=req.model,
+            history=history
+        )
         
         return {
             "answer": answer,
