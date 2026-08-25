@@ -1,13 +1,16 @@
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams, PointStruct
-from app.core.config import settings
+from backend.core.config import settings
 import uuid
+import os
 
 
 class QdrantVectorDB:
     def __init__(self):
-        self.client = QdrantClient(host=settings.qdrant_host, port=settings.qdrant_port)
         self.collection_name = settings.qdrant_collection_name
+        # Используем локальное хранилище вместо Docker!
+        db_path = os.path.join(os.getcwd(), "qdrant_storage")
+        self.client = QdrantClient(path=db_path)
         self._ensure_collection()
 
     def _ensure_collection(self):
