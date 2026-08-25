@@ -1,13 +1,15 @@
 import reflex as rx
 import httpx
 import os
+from pydantic import BaseModel
+from typing import List
 
 API_URL = "http://localhost:8000/api"
 
-class ChatMessage(rx.Base):
+class ChatMessage(BaseModel):
     text: str
     is_user: bool
-    sources: list[str] = []
+    sources: List[str] = []
 
 class State(rx.State):
     # Chat State
@@ -25,6 +27,20 @@ class State(rx.State):
     indexing_status: str = ""
     is_indexing: bool = False
 
+    def set_current_query(self, value: str):
+        self.current_query = value
+
+    def set_docs_dir(self, value: str):
+        self.docs_dir = value
+
+    def set_chunk_size(self, value: int | list[int]):
+        self.chunk_size = value[0] if isinstance(value, list) else value
+
+    def set_chunk_overlap(self, value: int | list[int]):
+        self.chunk_overlap = value[0] if isinstance(value, list) else value
+
+    def set_selected_model(self, value: str):
+        self.selected_model = value
     async def send_message(self):
         if not self.current_query.strip():
             return
