@@ -6,8 +6,8 @@ from fastembed import TextEmbedding
 class LLMService:
     def __init__(self):
         self.client = genai.Client(api_key=settings.gemini_api_key)
-        # Локальная модель для векторизации (бесплатно и без лимитов!)
-        self.embedding_model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+        # Мультиязычная модель для векторизации (отлично понимает и РУ, и АНГЛ)
+        self.embedding_model = TextEmbedding(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
         
     def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
         embeddings = list(self.embedding_model.embed(texts))

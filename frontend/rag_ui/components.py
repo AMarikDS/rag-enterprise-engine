@@ -37,12 +37,12 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
         rx.vstack(
             rx.cond(
                 is_user,
-                rx.text(text, color="white", font_size="16px"),
+                rx.text(text, color="white", font_size="16px", white_space="pre-wrap", word_break="break-word"),
                 rx.markdown(
                     text, 
                     component_map={
-                        "p": lambda text: rx.text(text, color="white", font_size="16px", margin_bottom="10px"),
-                        "li": lambda text: rx.list_item(text, color="white", font_size="16px"),
+                        "p": lambda text: rx.text(text, color="white", font_size="16px", margin_bottom="10px", white_space="pre-wrap", word_break="break-word"),
+                        "li": lambda text: rx.list_item(text, color="white", font_size="16px", white_space="pre-wrap", word_break="break-word"),
                     }
                 )
             ),
@@ -58,7 +58,7 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
                                 rx.foreach(
                                     sources,
                                     lambda s: rx.box(
-                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.7)", line_height="1.5"),
+                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.7)", line_height="1.5", white_space="pre-wrap", word_break="break-word"),
                                         padding_y="4px",
                                         border_bottom="1px solid rgba(255,255,255,0.05)",
                                         width="100%",
@@ -77,7 +77,8 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
                     collapsible=True,
                     width="100%",
                     margin_top="10px",
-                    background="transparent",
+                    variant="ghost",
+                    color_scheme="gray",
                 ),
             ),
             align_items="start"
