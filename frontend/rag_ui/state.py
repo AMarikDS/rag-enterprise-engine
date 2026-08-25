@@ -34,8 +34,8 @@ class State(rx.State):
     docs_dir: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "docs")
     chunk_size: int = 1000
     chunk_overlap: int = 200
-    selected_model: str = "gemini-1.5-flash"
-    available_models: list[str] = ["gemini-1.5-flash", "gemini-1.5-pro"]
+    selected_model: str = "gemini-3.6-flash"
+    available_models: list[str] = ["gemini-3.6-flash", "gemini-3.6-pro"]
     
     indexing_progress_val: int = 0
     indexing_status: str = ""
@@ -85,7 +85,7 @@ class State(rx.State):
         for s in self.sessions:
             if s["id"] == session_id:
                 self.current_kb_name = s.get("kb_name", "")
-                self.selected_model = s.get("model", "gemini-1.5-flash")
+                self.selected_model = s.get("model", "gemini-3.6-flash")
                 break
         await self.load_history()
 

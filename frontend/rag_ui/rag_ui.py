@@ -96,7 +96,7 @@ def sidebar() -> rx.Component:
                         rx.button(
                             s["name"], 
                             on_click=State.select_session(s["id"]), 
-                            variant=rx.cond(s["id"] == State.current_session_id, "solid", "ghost"), 
+                            variant=rx.cond(s["id"] == State.current_session_id, "solid", "surface"), 
                             color_scheme="cyan", 
                             justify="start", 
                             cursor="pointer",
@@ -106,9 +106,9 @@ def sidebar() -> rx.Component:
                             white_space="nowrap"
                         ),
                         rx.button(
-                            "🗑️",
+                            rx.icon("trash-2", size=16),
                             on_click=State.delete_session(s["id"]), 
-                            variant="ghost", 
+                            variant="soft", 
                             color_scheme="red", 
                             cursor="pointer",
                             width="32px",
@@ -141,9 +141,9 @@ def sidebar() -> rx.Component:
                     lambda kb: rx.hstack(
                         rx.text(kb, color="white", flex="1", padding_left="10px", font_size="14px", overflow="hidden", white_space="nowrap"),
                         rx.button(
-                            "🗑️",
+                            rx.icon("trash-2", size=16),
                             on_click=State.delete_kb(kb), 
-                            variant="ghost", 
+                            variant="soft", 
                             color_scheme="red", 
                             cursor="pointer",
                             width="32px",

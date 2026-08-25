@@ -21,7 +21,7 @@ indexing_progress = {
 
 class ChatRequest(BaseModel):
     query: str
-    model: str = "gemini-1.5-flash"
+    model: str = "gemini-3.6-flash"
     session_id: str
     kb_name: str
     
@@ -43,7 +43,7 @@ class HistoryRequest(BaseModel):
 class CreateSessionRequest(BaseModel):
     name: str
     kb_name: str
-    model: str = "gemini-1.5-flash"
+    model: str = "gemini-3.6-flash"
 
 SESSIONS_FILE = os.path.join(os.getcwd(), "data", "sessions.json")
 
@@ -95,8 +95,7 @@ def get_free_models():
     return {
         "models": [
             {"id": "gemini-3.6-flash", "name": "Gemini 3.6 Flash"},
-            {"id": "gemini-1.5-flash", "name": "Gemini 1.5 Flash"},
-            {"id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro"}
+            {"id": "gemini-3.6-pro", "name": "Gemini 3.6 Pro"}
         ]
     }
 
@@ -168,13 +167,19 @@ def get_sessions():
             "id": sid,
             "name": sdata.get("name", "New Chat"),
             "kb_name": sdata.get("kb_name", ""),
-            "model": sdata.get("model", "gemini-1.5-flash")
+            "model": sdata.get("model", "gemini-3.6-flash")
         })
     return {"sessions": result}
 
 @app.post("/api/sessions")
 def create_session(req: CreateSessionRequest):
     sessions = load_sessions()
+    
+    # Check for duplicate names
+    for sid, sdata in sessions.items():
+        if sdata.get("name") == req.name:
+            raise HTTPException(status_code=400, detail="Чат с таким именем уже существует")
+            
     session_id = str(uuid.uuid4())
     sessions[session_id] = {
         "name": req.name,
