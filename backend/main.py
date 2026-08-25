@@ -1,6 +1,13 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
+from pydantic import BaseModel
+from typing import List, Optional
+import os
+import json
 
-# ...
+from backend.core.config import settings
+from backend.core.llm_service import llm_service
+from backend.core.qdrant_client import qdrant_db
+from backend.core.document_processor import DocumentProcessor
 
 app = FastAPI(title="RAG Backend API")
 
