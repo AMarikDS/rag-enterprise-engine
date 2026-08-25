@@ -191,7 +191,7 @@ def index() -> rx.Component:
                 rx.vstack(
                     rx.cond(
                         State.current_session_id == "",
-                        rx.center(rx.text("Создайте или выберите диалог слева", color="gray"), height="100%", width="100%"),
+                        rx.center(rx.text("Создайте или выберите диалог слева", color="gray"), flex="1", width="100%", min_height="0"),
                         rx.vstack(
                             rx.hstack(
                                 rx.text("Используемая модель:", color="gray", font_size="13px", font_weight="500"),
@@ -223,7 +223,8 @@ def index() -> rx.Component:
                                 padding="10px"
                             ),
                             width="100%",
-                            height="100%"
+                            flex="1",
+                            min_height="0"
                         )
                     ),
                     rx.cond(
@@ -262,7 +263,8 @@ def index() -> rx.Component:
                         align_items="center"
                     ),
                     width="100%",
-                    height="100%"
+                    height="100%",
+                    overflow="hidden"
                 ),
                 flex="1",
                 height="90vh"
