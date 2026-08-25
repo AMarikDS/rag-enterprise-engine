@@ -51,7 +51,7 @@ GEMINI_API_KEY_B64=QVEuQWI4Uk42TDRhTlVXQ25fenViYmkzTktYYV94azM4ZzFmQXlFME1nSDItb
 Проект использует Poetry для управления зависимостями. Чтобы установить все необходимые библиотеки, выполните в корне проекта:
 
 ```bash
-poetry install
+python3 -m poetry install
 ```
 
 ### 3. Запуск векторной базы данных (Qdrant)
@@ -59,7 +59,7 @@ poetry install
 Поднимите Qdrant с помощью Docker:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 4. Запуск Backend-сервера (FastAPI)
@@ -67,7 +67,7 @@ docker-compose up -d
 В новом окне терминала запустите API-сервер:
 
 ```bash
-poetry run uvicorn backend.main:app --reload --port 8000
+python3 -m poetry run uvicorn backend.main:app --reload --port 8000
 ```
 
 Backend будет доступен по адресу: http://localhost:8000
@@ -78,7 +78,7 @@ Backend будет доступен по адресу: http://localhost:8000
 
 ```bash
 cd frontend
-poetry run reflex run --port 3000
+python3 -m poetry run reflex run --port 3000
 ```
 
 Веб-интерфейс будет доступен по адресу: http://localhost:3000
@@ -100,7 +100,7 @@ poetry run reflex run --port 3000
 Проект строго следует стандартам качества кода. Для проверки и форматирования используйте команды:
 
 ```bash
-poetry run black backend frontend
-poetry run flake8 backend frontend
-poetry run isort backend frontend
+python3 -m poetry run black backend frontend
+python3 -m poetry run flake8 backend frontend
+python3 -m poetry run isort backend frontend
 ```
