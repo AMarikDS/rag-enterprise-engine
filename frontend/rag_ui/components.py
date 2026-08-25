@@ -51,30 +51,35 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
                 rx.accordion.root(
                     rx.accordion.item(
                         rx.accordion.header(
-                            rx.text("📚 Источники", font_size="12px", color="gray")
+                            rx.text("Источники", font_size="12px", color="rgba(255,255,255,0.6)", font_weight="500")
                         ),
                         rx.accordion.content(
                             rx.vstack(
                                 rx.foreach(
                                     sources,
                                     lambda s: rx.box(
-                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.7)"),
-                                        background="rgba(0,0,0,0.3)",
-                                        padding="8px",
-                                        border_radius="5px",
+                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.8)", line_height="1.5"),
+                                        background="rgba(255,255,255,0.05)",
+                                        border="1px solid rgba(255,255,255,0.1)",
+                                        padding="10px",
+                                        border_radius="8px",
+                                        width="100%",
                                     )
                                 ),
                                 align_items="start",
-                                spacing="2"
+                                spacing="2",
+                                width="100%",
                             )
                         ),
                         value="sources",
-                        border="none"
+                        border="none",
+                        background="transparent",
                     ),
                     type="single",
                     collapsible=True,
                     width="100%",
                     margin_top="10px",
+                    background="transparent",
                 ),
             ),
             align_items="start"
