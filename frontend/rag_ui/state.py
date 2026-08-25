@@ -202,7 +202,8 @@ class State(rx.State):
                         err_detail = response.json().get("detail", response.text)
                     except Exception:
                         err_detail = response.text
-                    raise Exception(err_detail)
+                    err_msg = str(err_detail) if str(err_detail).strip() else "Unknown API Error"
+                    raise Exception(err_msg)
                 
                 data = response.json()
                 
