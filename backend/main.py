@@ -20,7 +20,7 @@ indexing_progress = {
 
 class ChatRequest(BaseModel):
     query: str
-    model: str = "gemini-2.5-flash"
+    model: str = "gemini-3.6-flash"
     
 class SettingsUpdateRequest(BaseModel):
     docs_dir: str
@@ -84,7 +84,7 @@ def get_free_models():
     # Provide a list of free models available in Gemini
     return {
         "models": [
-            {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash"},
+            {"id": "gemini-3.6-flash", "name": "Gemini 3.6 Flash"},
             {"id": "gemini-1.5-flash", "name": "Gemini 1.5 Flash"},
             {"id": "gemini-1.5-pro", "name": "Gemini 1.5 Pro"}
         ]
@@ -131,6 +131,8 @@ def chat(req: ChatRequest):
             "sources": context_chunks
         }
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/history")

@@ -37,12 +37,12 @@ class QdrantVectorDB:
         )
 
     def search(self, query_vector: list[float], limit: int = 5):
-        search_result = self.client.search(
+        response = self.client.query_points(
             collection_name=self.collection_name,
-            query_vector=query_vector,
+            query=query_vector,
             limit=limit
         )
-        return search_result
+        return response.points
 
     def get_collection_info(self):
         if self.client.collection_exists(self.collection_name):

@@ -21,8 +21,8 @@ class State(rx.State):
     docs_dir: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "docs")
     chunk_size: int = 1000
     chunk_overlap: int = 200
-    selected_model: str = "gemini-1.5-flash"
-    available_models: list[str] = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash"]
+    selected_model: str = "gemini-3.6-flash"
+    available_models: list[str] = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-3.6-flash"]
     
     indexing_progress_val: int = 0
     indexing_status: str = ""
