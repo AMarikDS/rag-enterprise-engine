@@ -197,7 +197,13 @@ class State(rx.State):
                     },
                     timeout=30.0
                 )
-                response.raise_for_status()
+                if response.status_code != 200:
+                    try:
+                        err_detail = response.json().get("detail", response.text)
+                    except Exception:
+                        err_detail = response.text
+                    raise Exception(err_detail)
+                
                 data = response.json()
                 
                 bot_msg = ChatMessage(
