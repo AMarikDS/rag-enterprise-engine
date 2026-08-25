@@ -55,13 +55,13 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
             ),
             align_items="start"
         ),
-        background="rgba(42, 133, 255, 0.2)" if is_user else "rgba(255, 255, 255, 0.05)",
+        background=rx.cond(is_user, "rgba(42, 133, 255, 0.2)", "rgba(255, 255, 255, 0.05)"),
         border="1px solid rgba(255, 255, 255, 0.1)",
         border_radius="15px",
         padding="15px",
         margin_y="10px",
         max_width="80%",
-        align_self="flex-end" if is_user else "flex-start",
+        align_self=rx.cond(is_user, "flex-end", "flex-start"),
         box_shadow="0 4px 15px rgba(0,0,0,0.1)",
         transition="all 0.3s ease",
     )
