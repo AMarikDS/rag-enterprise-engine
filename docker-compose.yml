@@ -1,11 +1,53 @@
 version: '3.9'
+
 services:
   qdrant:
     image: qdrant/qdrant:latest
+    container_name: rag_qdrant
     ports:
       - "6333:6333"
     volumes:
-      - ./qdrant_storage:/qdrant/storage
+      - ./data/qdrant_prod_storage:/qdrant/storage
     restart: always
+    networks:
+      - rag_net
 
-  # Web and backend will be run locally via poetry run reflex run for development
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: rag_backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+      - ./docs:/app/docs
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - qdrant
+    restart: always
+    networks:
+      - rag_net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: rag_frontend
+    ports:
+      - "3000:3000"
+      - "8000:8000"
+    environment:
+      - API_URL=http://backend:8080/api
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - rag_net
+
+networks:
+  rag_net:
+    driver: bridge

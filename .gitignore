@@ -12,18 +12,26 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.pytest_cache/
 
 # Reflex
 .web/
+frontend/.web/
 
-# IDE
+# IDE & OS
 .idea/
 .vscode/
 *.swp
 *.swo
+.DS_Store
 
 # Docker
 .docker/
 
-# DB
+# DB & Data
+data/
 qdrant_storage/
+
+# Logs
+logs/
+*.log

@@ -1,112 +1,76 @@
 <div align="center">
-  <code>UmV0cmlldmFsLUF1Z21lbnRlZCBHZW5lcmF0aW9uIFN5c3RlbQ==</code>
+  <code>UkFHLVJLUzogUmV0cmlldmFsLUF1Z21lbnRlZCBHZW5lcmF0aW9uIFN5c3RlbSAoRmFzdEFQSSArIFJlZmxleCArIFFkcmFudCArIEdlbWluaSk=</code>
   <br/>
-  <i>(Retrieval-Augmented Generation System)</i>
+  <i>Retrieval-Augmented Generation System</i>
 </div>
 
 # RAG System
 
-Мощная и гибкая система Retrieval-Augmented Generation (RAG) для умного поиска и диалога по вашей собственной базе документов (PDF). Проект разделен на современный Backend (FastAPI) и Frontend (Reflex).
+Enterprise-ready Retrieval-Augmented Generation (RAG) system designed for intelligent document search and semantic interactions. The architecture is strictly decoupled into a high-performance Backend (FastAPI) and a modern UI Frontend (Reflex), orchestrated entirely via Docker.
 
-## Основные возможности
+## Core Features
 
-- Современный UI: Элегантный интерфейс в стиле Glassmorphism.
-- Векторный поиск: Интеграция с Qdrant для семантического поиска.
-- Интеграция с ИИ: Поддержка моделей Google Gemini (1.5 Flash, 2.5 Flash, 1.5 Pro).
-- Гибкая настройка RAG: Возможность прямо из интерфейса настраивать директорию с документами, размер чанков (chunk size) и перекрытие (overlap).
-- Модульная архитектура: Строгое разделение на Backend (FastAPI) и Frontend (Reflex) в соответствии с правилами написания чистого кода (PEP8, аннотации типов).
-
----
-
-## Технологический стек
-
-- Backend: FastAPI, Uvicorn, LangChain, Google GenAI, Pydantic.
-- Frontend: Reflex (Python full-stack framework).
-- База Данных: Qdrant (Docker).
-- Пакетный менеджер: Poetry.
-- Линтинг и тестирование: Black, Flake8, Isort, Mypy, Pytest.
+- **Semantic Vector Search**: Integrated with Qdrant Vector Database for high-speed, meaning-based information retrieval.
+- **AI Integration**: Powered by Google Gemini (e.g., 3.7 Flash, 2.5 Pro) for contextual text generation and reasoning.
+- **Dynamic Configuration**: Adjustable document parsing chunk sizes and overlapping configurations via UI.
+- **Containerized Architecture**: Fully Dockerized environment for seamless deployment and scalability across any infrastructure.
+- **Modern Interface**: Professional Glassmorphism UI built with Python (Reflex).
 
 ---
 
-## Роль Docker в проекте
+## Technology Stack
 
-Docker в данном проекте используется исключительно для запуска векторной базы данных Qdrant.
-Зачем это нужно:
-1. Изоляция: Qdrant запускается в изолированном контейнере со всеми необходимыми зависимостями, не засоряя вашу основную операционную систему.
-2. Удобство: Вместо сложной ручной установки базы данных, достаточно одной команды (docker-compose up -d), чтобы развернуть готовое к работе хранилище векторов на порту 6333.
-3. Сохранение данных: В docker-compose.yml настроен volume (./qdrant_storage:/qdrant/storage), что позволяет сохранять загруженные векторы и чанки даже после перезапуска или остановки контейнера.
-
----
-
-## Установка и запуск
-
-### 1. Подготовка окружения
-
-Убедитесь, что у вас установлен Python (>=3.10), Docker и Poetry.
-Клонируйте репозиторий и настройте файл переменных окружения.
-
-В корне проекта создайте файл .env. В целях безопасности рекомендуется хранить токен Gemini в закодированном виде (Base64) и декодировать его уже на стороне приложения. 
-Пример файла .env:
-```env
-# Ваш токен в формате Base64
-GEMINI_API_KEY_B64=QVEuQWI4Uk42TDRhTlVXQ25fenViYmkzTktYYV94azM4ZzFmQXlFME1nSDItbWhrUGg1Snc=
-```
-
-### 2. Установка зависимостей
-
-Проект использует Poetry для управления зависимостями. Чтобы установить все необходимые библиотеки, выполните в корне проекта:
-
-```bash
-python3 -m poetry install
-```
-
-### 3. Запуск векторной базы данных (Qdrant)
-
-Поднимите Qdrant с помощью Docker:
-
-```bash
-docker compose up -d
-```
-
-### 4. Запуск Backend-сервера (FastAPI)
-
-В новом окне терминала запустите API-сервер:
-
-```bash
-python3 -m poetry run uvicorn backend.main:app --reload --port 8080
-```
-
-Backend будет доступен по адресу: http://localhost:8080
-
-### 5. Запуск Frontend-интерфейса (Reflex)
-
-В отдельном окне терминала перейдите в папку frontend и запустите UI:
-
-```bash
-cd frontend
-python3 -m poetry run reflex run --frontend-port 3000
-```
-
-Веб-интерфейс будет доступен по адресу: http://localhost:3000
+- **Backend**: FastAPI, Uvicorn, LangChain, Google GenAI, Pydantic, FastEmbed.
+- **Frontend**: Reflex (Full-stack Python Web Framework).
+- **Database**: Qdrant (Vector Database Engine).
+- **Infrastructure**: Docker, Docker Compose.
+- **Package Management**: Poetry.
 
 ---
 
-## Как пользоваться
+## Getting Started
 
-1. Откройте интерфейс в браузере (порт 3000).
-2. Перейдите во вкладку "Настройки". Укажите абсолютный путь к папке с вашими PDF-файлами (по умолчанию используется папка docs/ в корне проекта).
-3. При необходимости отрегулируйте размер чанков и выберите нужную ИИ-модель.
-4. Нажмите "Индексировать базу". Дождитесь окончания процесса.
-5. Перейдите во вкладку "Чат" и задавайте вопросы. Система найдет релевантные куски текста в ваших документах и сформирует точный ответ.
+### Prerequisites
+
+Ensure the following dependencies are installed on your host system:
+1. Docker Engine
+2. Docker Compose
+
+### Environment Configuration
+
+Create a `.env` file in the root directory and specify the required variables:
+
+```ini
+GEMINI_API_KEY=your_google_gemini_api_key_here
+```
+
+### Deployment
+
+The entire system is orchestrated via Docker Compose. To build and start all services (Frontend, Backend, and Qdrant Database):
+
+```bash
+docker-compose up --build -d
+```
+
+### Accessing the System
+
+Once the containers are successfully provisioned and running, access the services via:
+
+- **Frontend Application**: [http://localhost:3000](http://localhost:3000)
+- **Backend API Documentation**: [http://localhost:8080/docs](http://localhost:8080/docs)
+
+### Stopping the System
+
+To gracefully stop and remove the containers, run:
+
+```bash
+docker-compose down
+```
 
 ---
 
-## Линтинг и Тестирование
+## Architecture Overview
 
-Проект строго следует стандартам качества кода. Для проверки и форматирования используйте команды:
-
-```bash
-python3 -m poetry run black backend frontend
-python3 -m poetry run flake8 backend frontend
-python3 -m poetry run isort backend frontend
-```
+1. **qdrant**: Runs the official Qdrant rust-based vector database on port `6333`. Data is persisted to the local `./data/qdrant_prod_storage` volume.
+2. **backend**: A FastAPI service running on port `8080`. Handles document parsing, vector embedding generation (via MiniLM-L12), Qdrant queries, and LLM communication.
+3. **frontend**: A Reflex application running on port `3000` (UI) and `8000` (WebSocket state server). Communicates internally with the backend API.

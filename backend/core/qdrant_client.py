@@ -7,9 +7,9 @@ import os
 
 class QdrantVectorDB:
     def __init__(self):
-        # Используем локальное хранилище вместо Docker
-        db_path = os.path.join(os.getcwd(), "data", "qdrant_storage")
-        self.client = QdrantClient(path=db_path)
+        qdrant_host = os.getenv("QDRANT_HOST", "qdrant")
+        qdrant_port = int(os.getenv("QDRANT_PORT", "6333"))
+        self.client = QdrantClient(host=qdrant_host, port=qdrant_port)
 
     def _ensure_collection(self, collection_name: str):
         if not self.client.collection_exists(collection_name):
