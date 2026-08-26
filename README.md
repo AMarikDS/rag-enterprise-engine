@@ -1,10 +1,39 @@
 <div align="center">
-  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBzdHlsZT0iYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgIzBmMTcyYSAwJSwgIzFlMWI0YiAxMDAlKTsgYm9yZGVyLXJhZGl1czogMTJweDsgYm9yZGVyOiAxcHggc29saWQgIzMxMmU4MTsiPgogIDx0ZXh0IHg9IjUwJSIgeT0iNDUlIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjODE4Y2Y4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iNCI+TkVYVVMgUkFHIEVOR0lORTwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9Ijc1JSIgZm9udC1mYW1pbHk9InVpLW1vbm9zcGFjZSwgU0ZNb25vLVJlZ3VsYXIsIE1lbmxvLCBNb25hY28sIENvbnNvbGFzLCBtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5NGEzYjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIxIj5GYXN0QVBJIOKXiCBSZWZsZXgg4peIIFFkcmFudCDil4ggR2VtaW5pPC90ZXh0Pgo8L3N2Zz4=" alt="Nexus RAG Engine Banner">
+  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBzdHlsZT0iYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgIzBmMTcyYSAwJSwgIzFlMWI0YiAxMDAlKTsgYm9yZGVyLXJhZGl1czogMTJweDsiPgogIDx0ZXh0IHg9IjUwJSIgeT0iNDUlIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjODE4Y2Y4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iNCI+TkVYVVMgUkFHIEVOR0lORTwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9Ijc1JSIgZm9udC1mYW1pbHk9InVpLW1vbm9zcGFjZSwgU0ZNb25vLVJlZ3VsYXIsIE1lbmxvLCBNb25hY28sIENvbnNvbGFzLCBtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5NGEzYjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIxIj5GYXN0QVBJIOKXiCBSZWZsZXgg4peIIFFkcmFudCDil4ggR2VtaW5pPC90ZXh0Pgo8L3N2Zz4=" alt="Nexus RAG Engine Banner">
+</div>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Reflex-111111?style=for-the-badge&logo=python&logoColor=white" alt="Reflex">
+  <img src="https://img.shields.io/badge/Qdrant-FF5252?style=for-the-badge&logo=data&logoColor=white" alt="Qdrant">
+  <img src="https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
 </div>
 
 # Nexus RAG Engine
 
 An enterprise-ready Retrieval-Augmented Generation (RAG) system engineered for high-performance semantic search and AI interactions. The architecture implements a strict decoupling between a REST API backend (FastAPI) and a modern Glassmorphism frontend (Reflex), with complete Docker orchestration for scalable deployments.
+
+## System Architecture
+
+```mermaid
+graph TD
+    classDef user fill:#6366f1,stroke:#4f46e5,stroke-width:2px,color:#fff,font-weight:bold
+    classDef frontend fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff,font-weight:bold
+    classDef backend fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff,font-weight:bold
+    classDef db fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff,font-weight:bold
+    classDef ai fill:#a855f7,stroke:#9333ea,stroke-width:2px,color:#fff,font-weight:bold
+
+    User((Client / User)):::user <-->|HTTP / WebSockets| UI[Reflex Web Interface]:::frontend
+    UI <-->|REST API JSON| API[FastAPI Orchestrator]:::backend
+    
+    API -->|1. Index Documents & Embed| VDB[(Qdrant Vector DB)]:::db
+    VDB -.->|2. Retrieve Top-K Vectors| API
+    
+    API -->|3. Inject Context into Prompt| LLM((Google Gemini AI)):::ai
+    LLM -.->|4. Stream/Return Answer| API
+```
 
 ## Architecture & Stack
 
