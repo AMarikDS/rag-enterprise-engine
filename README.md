@@ -28,6 +28,7 @@ An enterprise-ready Retrieval-Augmented Generation (RAG) system engineered for h
 
 - **High-Speed Semantic Search**: Deep integration with Qdrant Vector Database utilizing HNSW indexing and Cosine distance metric for optimal meaning-based retrieval.
 - **Multilingual Semantic Embeddings**: Utilizes the `paraphrase-multilingual-MiniLM-L12-v2` model via FastEmbed. This allows the system to seamlessly ingest and search PDFs and text across 50+ languages simultaneously (including English and Russian), projecting them into a unified semantic vector space without quality loss. The model weights are automatically downloaded directly from HuggingFace upon the very first container initialization.
+- **Context-Aware Conversations**: The system maintains stateful chat sessions with conversational memory. It dynamically injects recent interactions from active sessions into the LLM prompt, ensuring seamless conversational continuity without exhausting token limits.
 - **LLM Integration**: Native support for Google Gemini (e.g., 3.7 Flash, 2.5 Pro) with strict context-binding to prevent hallucination.
 - **Dynamic Ingestion Configuration**: Adjustable chunk sizes and overlapping windows configurable directly from the UI.
 - **Docker-First Deployment**: Seamless environment bootstrapping via Docker Compose, eliminating host OS dependencies.
