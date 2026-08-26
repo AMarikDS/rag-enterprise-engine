@@ -8,6 +8,7 @@
   <img src="https://img.shields.io/badge/Reflex-111111?style=for-the-badge&logo=python&logoColor=white" alt="Reflex">
   <img src="https://img.shields.io/badge/Qdrant-FF5252?style=for-the-badge&logo=data&logoColor=white" alt="Qdrant">
   <img src="https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
+  <img src="https://img.shields.io/badge/FastEmbed-FF9900?style=for-the-badge&logo=huggingface&logoColor=white" alt="FastEmbed">
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
 </div>
 
