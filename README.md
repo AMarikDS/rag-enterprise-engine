@@ -45,7 +45,7 @@ GEMINI_API_KEY=your_google_gemini_api_key_here
 
 2. Initialize and start the containerized services:
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 ### Access Points
@@ -57,7 +57,7 @@ docker-compose up --build -d
 
 To stop the services and release bound ports (data persists in the local volume):
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Infrastructure Topology
