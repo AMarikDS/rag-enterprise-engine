@@ -1,5 +1,5 @@
 [project]
-name = "nexus-rag"
+name = "rag-enterprise-engine"
 version = "0.1.0"
 description = "RAG System with Reflex and Qdrant"
 authors = [
