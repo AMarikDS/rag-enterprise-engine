@@ -1,16 +1,14 @@
 <div align="center">
-  <img src="assets/banner.svg" alt="RAG Enterprise Engine Banner" width="100%">
+  <img src="./assets/banner.svg" alt="RAG Enterprise Engine Banner">
 </div>
 
-<br/>
-
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python" style="margin: 0 5px;">
-  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" style="margin: 0 5px;">
-  <img src="https://img.shields.io/badge/Reflex-111111?style=for-the-badge&logo=python&logoColor=white" alt="Reflex" style="margin: 0 5px;">
-  <img src="https://img.shields.io/badge/Qdrant-FF5252?style=for-the-badge&logo=data&logoColor=white" alt="Qdrant" style="margin: 0 5px;">
-  <img src="https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini" style="margin: 0 5px;">
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" style="margin: 0 5px;">
+  <img src="https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Reflex-111111?style=for-the-badge&logo=python&logoColor=white" alt="Reflex">
+  <img src="https://img.shields.io/badge/Qdrant-FF5252?style=for-the-badge&logo=data&logoColor=white" alt="Qdrant">
+  <img src="https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
 </div>
 
 # RAG Enterprise Engine
