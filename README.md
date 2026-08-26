@@ -15,21 +15,6 @@
 
 An enterprise-ready Retrieval-Augmented Generation (RAG) system engineered for high-performance semantic search and AI interactions. The architecture implements a strict decoupling between a REST API backend (FastAPI) and a modern Glassmorphism frontend (Reflex), with complete Docker orchestration for scalable deployments.
 
-## System Architecture
-
-```mermaid
-graph TD
-    classDef default font-family:sans-serif,font-weight:bold
-    User((Client / User)) <-->|HTTP / WebSockets| UI[Reflex Web Interface]
-    UI <-->|REST API JSON| API[FastAPI Orchestrator]
-    
-    API -->|1. Index Documents & Embed| VDB[(Qdrant Vector DB)]
-    VDB -.->|2. Retrieve Top-K Vectors| API
-    
-    API -->|3. Inject Context into Prompt| LLM((Google Gemini AI))
-    LLM -.->|4. Stream/Return Answer| API
-```
-
 ## Architecture & Stack
 
 - **Backend**: FastAPI, Uvicorn, LangChain, Google GenAI, Pydantic, FastEmbed
