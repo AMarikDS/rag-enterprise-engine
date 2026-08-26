@@ -1,89 +1,58 @@
 <div align="center">
-  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBzdHlsZT0iYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDkwZGVnLCAjMGYxNzJhLCAjMWUyOTNiKTsgYm9yZGVyLXJhZGl1czogMTJweDsiPgogIDx0ZXh0IHg9IjUwJSIgeT0iNDUlIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0iIzM4YmRmOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjIiPlJBRy1SS1MgRU5HSU5FPC90ZXh0PgogIDx0ZXh0IHg9IjUwJSIgeT0iNzUlIiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXNpemU9IjE2IiBmaWxsPSIjOTRhM2I4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIj5GYXN0QVBJIOKAoiBSZWZsZXgg4oCiIFFkcmFudCDigKIgR2VtaW5pPC90ZXh0Pgo8L3N2Zz4=" alt="RAG-RKS Engine Banner">
+  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBzdHlsZT0iYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgIzBmMTcyYSAwJSwgIzFlMWI0YiAxMDAlKTsgYm9yZGVyLXJhZGl1czogMTJweDsgYm9yZGVyOiAxcHggc29saWQgIzMxMmU4MTsiPgogIDx0ZXh0IHg9IjUwJSIgeT0iNDUlIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSwgQmxpbmtNYWNTeXN0ZW1Gb250LCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ2IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjODE4Y2Y4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBsZXR0ZXItc3BhY2luZz0iNCI+TkVYVVMgUkFHIEVOR0lORTwvdGV4dD4KICA8dGV4dCB4PSI1MCUiIHk9Ijc1JSIgZm9udC1mYW1pbHk9InVpLW1vbm9zcGFjZSwgU0ZNb25vLVJlZ3VsYXIsIE1lbmxvLCBNb25hY28sIENvbnNvbGFzLCBtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5NGEzYjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIxIj5GYXN0QVBJIOKXiCBSZWZsZXgg4peIIFFkcmFudCDil4ggR2VtaW5pPC90ZXh0Pgo8L3N2Zz4=" alt="Nexus RAG Engine Banner">
 </div>
 
-# RAG System
+# Nexus RAG Engine
 
-## Что это за проект и зачем он нужен?
+An enterprise-ready Retrieval-Augmented Generation (RAG) system engineered for high-performance semantic search and AI interactions. The architecture implements a strict decoupling between a REST API backend (FastAPI) and a modern Glassmorphism frontend (Reflex), with complete Docker orchestration for scalable deployments.
 
-**Retrieval-Augmented Generation (RAG)** — это архитектура, которая наделяет искусственный интеллект "корпоративной памятью". Нейросети (например, ChatGPT или Gemini) обладают обширными, но обобщенными знаниями. Они не знают деталей ваших внутренних регламентов, секретных документов или специфики вашего узкого бизнеса. Если задать им специализированный вопрос, они начнут выдумывать факты (галлюцинировать).
+## Architecture & Stack
 
-Этот проект решает данную проблему. Он позволяет загрузить ваши собственные конфиденциальные документы (PDF, TXT) и создать закрытую базу знаний. Когда вы задаете вопрос, система:
-1. Мгновенно находит в ваших документах самые подходящие абзацы с помощью векторного поиска (Qdrant).
-2. Показывает эти абзацы нейросети (Google Gemini).
-3. Нейросеть генерирует умный, структурированный и честный ответ, основываясь **исключительно на ваших документах**, и предоставляет ссылки на источники.
+- **Backend**: FastAPI, Uvicorn, LangChain, Google GenAI, Pydantic, FastEmbed
+- **Frontend**: Reflex (Python Full-Stack Web Framework)
+- **Vector Engine**: Qdrant (Rust-based semantic database)
+- **Deployment**: Docker, Docker Compose
+- **Dependency Management**: Poetry
 
-Это идеальный инструмент для юристов (анализ договоров), инженеров (поиск по ГОСТам) и корпоративных баз знаний (внутренние регламенты).
+## Key Capabilities
 
----
+- **High-Speed Semantic Search**: Deep integration with Qdrant Vector Database utilizing HNSW indexing and Cosine distance metric for optimal meaning-based retrieval.
+- **LLM Integration**: Native support for Google Gemini (e.g., 3.7 Flash, 2.5 Pro) with strict context-binding to prevent hallucination.
+- **Dynamic Ingestion Configuration**: Adjustable chunk sizes and overlapping windows configurable directly from the UI.
+- **Docker-First Deployment**: Seamless environment bootstrapping via Docker Compose, eliminating host OS dependencies.
 
-## Особенности архитектуры
+## Deployment Guide
 
-Enterprise-ready система, разработанная для умного семантического поиска. Архитектура строго разделена на высокопроизводительный Backend (FastAPI) и современный UI Frontend (Reflex), с полной оркестрацией через Docker.
+### Requirements
+- Docker Engine (v24.0+)
+- Docker Compose (v2.20+)
 
-## Основные возможности
+### Setup Instructions
 
-- **Semantic Vector Search**: Integrated with Qdrant Vector Database for high-speed, meaning-based information retrieval.
-- **AI Integration**: Powered by Google Gemini (e.g., 3.7 Flash, 2.5 Pro) for contextual text generation and reasoning.
-- **Dynamic Configuration**: Adjustable document parsing chunk sizes and overlapping configurations via UI.
-- **Containerized Architecture**: Fully Dockerized environment for seamless deployment and scalability across any infrastructure.
-- **Modern Interface**: Professional Glassmorphism UI built with Python (Reflex).
-
----
-
-## Technology Stack
-
-- **Backend**: FastAPI, Uvicorn, LangChain, Google GenAI, Pydantic, FastEmbed.
-- **Frontend**: Reflex (Full-stack Python Web Framework).
-- **Database**: Qdrant (Vector Database Engine).
-- **Infrastructure**: Docker, Docker Compose.
-- **Package Management**: Poetry.
-
----
-
-## Getting Started
-
-### Prerequisites
-
-Ensure the following dependencies are installed on your host system:
-1. Docker Engine
-2. Docker Compose
-
-### Environment Configuration
-
-Create a `.env` file in the root directory and specify the required variables:
-
+1. Configure the environment variables by creating a `.env` file in the repository root:
 ```ini
 GEMINI_API_KEY=your_google_gemini_api_key_here
 ```
 
-### Deployment
-
-The entire system is orchestrated via Docker Compose. To build and start all services (Frontend, Backend, and Qdrant Database):
-
+2. Initialize and start the containerized services:
 ```bash
 docker-compose up --build -d
 ```
 
-### Accessing the System
+### Access Points
 
-Once the containers are successfully provisioned and running, access the services via:
+- **Web Interface**: [http://localhost:3000](http://localhost:3000)
+- **API Documentation**: [http://localhost:8080/docs](http://localhost:8080/docs)
 
-- **Frontend Application**: [http://localhost:3000](http://localhost:3000)
-- **Backend API Documentation**: [http://localhost:8080/docs](http://localhost:8080/docs)
+### Teardown
 
-### Stopping the System
-
-To gracefully stop and remove the containers, run:
-
+To stop the services and release bound ports (data persists in the local volume):
 ```bash
 docker-compose down
 ```
 
----
+## Infrastructure Topology
 
-## Architecture Overview
-
-1. **qdrant**: Runs the official Qdrant rust-based vector database on port `6333`. Data is persisted to the local `./data/qdrant_prod_storage` volume.
-2. **backend**: A FastAPI service running on port `8080`. Handles document parsing, vector embedding generation (via MiniLM-L12), Qdrant queries, and LLM communication.
-3. **frontend**: A Reflex application running on port `3000` (UI) and `8000` (WebSocket state server). Communicates internally with the backend API.
+1. `qdrant`: Official rust-compiled Qdrant vector database (port `6333`). Persists indexing data to `./data/qdrant_prod_storage`.
+2. `backend`: FastAPI orchestration layer (port `8080`). Manages parsing, vector embedding generation, database communication, and AI synthesis.
+3. `frontend`: Reflex application providing a Web UI (port `3000`) and WebSocket event server (port `8000`).

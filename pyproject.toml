@@ -1,5 +1,5 @@
 [project]
-name = "rag-rks"
+name = "nexus-rag"
 version = "0.1.0"
 description = "RAG System with Reflex and Qdrant"
 authors = [
