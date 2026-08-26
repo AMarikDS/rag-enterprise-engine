@@ -23,7 +23,8 @@ COPY .env .
 WORKDIR /app/frontend
 
 ENV REFLEX_ENV=prod
+ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["reflex", "run", "--env", "prod", "--frontend-port", "3000", "--backend-port", "8000"]
+CMD ["reflex", "run", "--env", "prod"]

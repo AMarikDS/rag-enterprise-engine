@@ -37,7 +37,6 @@ services:
     container_name: rag_frontend
     ports:
       - "3000:3000"
-      - "8000:8000"
     environment:
       - API_URL=http://backend:8080/api
     depends_on:
