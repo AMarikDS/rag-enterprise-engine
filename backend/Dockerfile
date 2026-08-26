@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl gcc g++ && rm -rf /var/lib/apt/lists/*
 
 # Install poetry
-RUN pip install poetry==1.8.3
+RUN pip install "poetry>=2.0.0"
 
 # Copy dependencies
 COPY pyproject.toml poetry.lock ./
