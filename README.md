@@ -6,9 +6,24 @@
 
 # RAG System
 
-Enterprise-ready Retrieval-Augmented Generation (RAG) system designed for intelligent document search and semantic interactions. The architecture is strictly decoupled into a high-performance Backend (FastAPI) and a modern UI Frontend (Reflex), orchestrated entirely via Docker.
+## Что это за проект и зачем он нужен?
 
-## Core Features
+**Retrieval-Augmented Generation (RAG)** — это архитектура, которая наделяет искусственный интеллект "корпоративной памятью". Нейросети (например, ChatGPT или Gemini) обладают обширными, но обобщенными знаниями. Они не знают деталей ваших внутренних регламентов, секретных документов или специфики вашего узкого бизнеса. Если задать им специализированный вопрос, они начнут выдумывать факты (галлюцинировать).
+
+Этот проект решает данную проблему. Он позволяет загрузить ваши собственные конфиденциальные документы (PDF, TXT) и создать закрытую базу знаний. Когда вы задаете вопрос, система:
+1. Мгновенно находит в ваших документах самые подходящие абзацы с помощью векторного поиска (Qdrant).
+2. Показывает эти абзацы нейросети (Google Gemini).
+3. Нейросеть генерирует умный, структурированный и честный ответ, основываясь **исключительно на ваших документах**, и предоставляет ссылки на источники.
+
+Это идеальный инструмент для юристов (анализ договоров), инженеров (поиск по ГОСТам) и корпоративных баз знаний (внутренние регламенты).
+
+---
+
+## Особенности архитектуры
+
+Enterprise-ready система, разработанная для умного семантического поиска. Архитектура строго разделена на высокопроизводительный Backend (FastAPI) и современный UI Frontend (Reflex), с полной оркестрацией через Docker.
+
+## Основные возможности
 
 - **Semantic Vector Search**: Integrated with Qdrant Vector Database for high-speed, meaning-based information retrieval.
 - **AI Integration**: Powered by Google Gemini (e.g., 3.7 Flash, 2.5 Pro) for contextual text generation and reasoning.
