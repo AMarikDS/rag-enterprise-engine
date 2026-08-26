@@ -11,7 +11,7 @@ RUN pip install "poetry>=2.0.0"
 # Copy dependencies
 COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false \
-    && poetry install --only main --no-interaction --no-ansi
+    && poetry install --only main --no-interaction --no-ansi --no-root
 
 # Copy source code
 COPY backend ./backend
