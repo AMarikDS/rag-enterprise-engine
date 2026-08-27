@@ -177,8 +177,8 @@ class State(rx.State):
     def set_selected_model(self, value: str):
         self.selected_model = value
 
-    def on_key_down(self, key: str):
-        if key == "Enter":
+    def on_key_down(self, key: str, shift_key: bool):
+        if key == "Enter" and not shift_key:
             return State.send_message()
 
     async def _save_message_to_backend(self, msg: ChatMessage):
@@ -196,11 +196,11 @@ class State(rx.State):
         except Exception:
             pass
 
-    async def send_message(self):
-        if not self.current_query.strip() or not self.current_session_id:
+    async def send_message_form(self, form_data: dict):
+        query = form_data.get("query", "")
+        if not query.strip() or not self.current_session_id:
             return
             
-        query = self.current_query
         self.current_query = ""
         user_msg = ChatMessage(text=query, is_user=True)
         self.chat_history.append(user_msg)
@@ -209,6 +209,7 @@ class State(rx.State):
         self.is_loading = True
         yield rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
         yield rx.set_value("query_input", "")
+        yield rx.call_script("setTimeout(() => { var el = document.getElementById('query_input'); if(el) { var setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set; setter.call(el, ''); el.dispatchEvent(new Event('input', { bubbles: true })); el.style.removeProperty('height'); } }, 50);")
         
         try:
             async with httpx.AsyncClient() as client:

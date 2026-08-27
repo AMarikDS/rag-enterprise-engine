@@ -231,36 +231,41 @@ def index() -> rx.Component:
                         State.is_loading,
                         rx.spinner(color="cyan", size="3"),
                     ),
-                    rx.hstack(
-                        rx.text_area(
-                            id="query_input",
-                            placeholder="Задайте вопрос... (Enter - отправить, Shift+Enter - перенос)",
-                            value=State.current_query,
-                            on_change=State.set_current_query,
-                            on_key_down=State.on_key_down,
+                    rx.form(
+                        rx.hstack(
+                            rx.text_area(
+                                id="query_input",
+                                name="query",
+                                placeholder="Задайте вопрос... (Enter - отправить, Shift+Enter - перенос)",
+                                enter_key_submit=True,
+                                width="100%",
+                                size="3",
+                                variant="surface",
+                                color_scheme="cyan",
+                                background="rgba(255, 255, 255, 0.05)",
+                                color="white",
+                                border="1px solid rgba(255, 255, 255, 0.1)",
+                                auto_height=True,
+                                max_height="250px",
+                                disabled=State.current_session_id == "",
+                                style={"whiteSpace": "pre-wrap", "wordBreak": "break-word"}
+                            ),
+                            rx.button(
+                                "Отправить",
+                                id="send_btn",
+                                type="submit",
+                                size="3",
+                                color_scheme="cyan",
+                                variant="solid",
+                                cursor="pointer",
+                                disabled=State.current_session_id == ""
+                            ),
                             width="100%",
-                            size="3",
-                            variant="surface",
-                            color_scheme="cyan",
-                            background="rgba(255, 255, 255, 0.05)",
-                            color="white",
-                            border="1px solid rgba(255, 255, 255, 0.1)",
-                            auto_height=True,
-                            disabled=State.current_session_id == "",
-                            style={"whiteSpace": "pre-wrap", "wordBreak": "break-word"}
+                            margin_top="20px",
+                            align_items="center"
                         ),
-                        rx.button(
-                            "Отправить",
-                            on_click=State.send_message,
-                            size="3",
-                            color_scheme="cyan",
-                            variant="solid",
-                            cursor="pointer",
-                            disabled=State.current_session_id == ""
-                        ),
-                        width="100%",
-                        margin_top="20px",
-                        align_items="center"
+                        on_submit=State.send_message_form,
+                        width="100%"
                     ),
                     width="100%",
                     height="100%",
