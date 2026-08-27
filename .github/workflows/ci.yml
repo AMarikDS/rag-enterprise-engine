@@ -36,6 +36,8 @@ jobs:
         run: poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
       - name: Run Tests (Pytest)
+        env:
+          GEMINI_API_KEY: "dummy_key_for_testing"
         run: poetry run pytest || echo "No tests found or tests passed"
 
   docker-build-test:
