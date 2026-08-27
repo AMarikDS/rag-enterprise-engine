@@ -27,7 +27,7 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
-        run: poetry install --with dev
+        run: poetry install --with dev --no-root
 
       - name: Check formatting with Black
         run: poetry run black --check .
