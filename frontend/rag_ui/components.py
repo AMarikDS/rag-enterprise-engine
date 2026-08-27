@@ -1,5 +1,6 @@
 import reflex as rx
 
+
 def glass_box(*children, **props) -> rx.Component:
     """A glassmorphism container."""
     return rx.box(
@@ -13,6 +14,7 @@ def glass_box(*children, **props) -> rx.Component:
         **props
     )
 
+
 def navbar() -> rx.Component:
     return glass_box(
         rx.hstack(
@@ -20,31 +22,51 @@ def navbar() -> rx.Component:
             rx.spacer(),
             rx.link(
                 rx.button("Чат", variant="soft", color_scheme="cyan", size="3"),
-                href="/"
+                href="/",
             ),
             rx.link(
                 rx.button("Настройки", variant="soft", color_scheme="cyan", size="3"),
-                href="/settings"
+                href="/settings",
             ),
             align_items="center",
-            width="100%"
+            width="100%",
         ),
         margin_bottom="20px",
     )
+
 
 def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.cond(
                 is_user,
-                rx.text(text, color="white", font_size="16px", white_space="pre-wrap", word_break="break-word"),
+                rx.text(
+                    text,
+                    color="white",
+                    font_size="16px",
+                    white_space="pre-wrap",
+                    word_break="break-word",
+                ),
                 rx.markdown(
-                    text, 
+                    text,
                     component_map={
-                        "p": lambda text: rx.text(text, color="white", font_size="16px", margin_bottom="10px", white_space="pre-wrap", word_break="break-word"),
-                        "li": lambda text: rx.list_item(text, color="white", font_size="16px", white_space="pre-wrap", word_break="break-word"),
-                    }
-                )
+                        "p": lambda text: rx.text(
+                            text,
+                            color="white",
+                            font_size="16px",
+                            margin_bottom="10px",
+                            white_space="pre-wrap",
+                            word_break="break-word",
+                        ),
+                        "li": lambda text: rx.list_item(
+                            text,
+                            color="white",
+                            font_size="16px",
+                            white_space="pre-wrap",
+                            word_break="break-word",
+                        ),
+                    },
+                ),
             ),
             rx.cond(
                 sources,
@@ -52,8 +74,13 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
                     rx.accordion.item(
                         rx.accordion.header(
                             rx.accordion.trigger(
-                                rx.text("Источники", font_size="12px", color="rgba(255,255,255,0.7)", font_weight="bold"),
-                                cursor="pointer"
+                                rx.text(
+                                    "Источники",
+                                    font_size="12px",
+                                    color="rgba(255,255,255,0.7)",
+                                    font_weight="bold",
+                                ),
+                                cursor="pointer",
                             )
                         ),
                         rx.accordion.content(
@@ -61,11 +88,18 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
                                 rx.foreach(
                                     sources,
                                     lambda s: rx.box(
-                                        rx.text(s, font_size="11px", color="rgba(255,255,255,0.7)", line_height="1.5", white_space="pre-wrap", word_break="break-word"),
+                                        rx.text(
+                                            s,
+                                            font_size="11px",
+                                            color="rgba(255,255,255,0.7)",
+                                            line_height="1.5",
+                                            white_space="pre-wrap",
+                                            word_break="break-word",
+                                        ),
                                         padding_y="4px",
                                         border_bottom="1px solid rgba(255,255,255,0.05)",
                                         width="100%",
-                                    )
+                                    ),
                                 ),
                                 align_items="start",
                                 spacing="1",
@@ -84,9 +118,11 @@ def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Compone
                     color_scheme="gray",
                 ),
             ),
-            align_items="start"
+            align_items="start",
         ),
-        background=rx.cond(is_user, "rgba(42, 133, 255, 0.2)", "rgba(255, 255, 255, 0.05)"),
+        background=rx.cond(
+            is_user, "rgba(42, 133, 255, 0.2)", "rgba(255, 255, 255, 0.05)"
+        ),
         border="1px solid rgba(255, 255, 255, 0.1)",
         border_radius="15px",
         padding="15px",

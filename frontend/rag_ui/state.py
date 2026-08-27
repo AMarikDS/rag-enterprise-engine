@@ -6,32 +6,37 @@ from typing import List
 
 API_URL = os.getenv("API_URL", "http://localhost:8080/api")
 
+
 class ChatMessage(BaseModel):
     text: str
     is_user: bool
     sources: List[str] = []
+
 
 class SessionData(BaseModel):
     id: str
     name: str
     kb_name: str
 
+
 class State(rx.State):
     # Chat State
     chat_history: list[ChatMessage] = []
     current_query: str = ""
     is_loading: bool = False
-    
+
     # KB & Sessions State
     kbs: list[str] = []
-    sessions: list[dict] = [] # list of {id, name, kb_name}
+    sessions: list[dict] = []  # list of {id, name, kb_name}
     current_session_id: str = ""
     current_kb_name: str = ""
     new_kb_name: str = ""
     new_session_name: str = ""
-    
+
     # Settings State
-    docs_dir: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "docs")
+    docs_dir: str = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "docs"
+    )
     chunk_size: int = 1000
     chunk_overlap: int = 200
     selected_model: str = "gemini-3.6-flash"
@@ -39,9 +44,9 @@ class State(rx.State):
         "gemini-3.7-flash (⚡️ Рекомендуемая, быстрая, топ для бесплатного тарифа)",
         "gemini-2.5-pro (🧠 Мощная, но жесткие лимиты без подписки)",
         "gemini-3.6-flash (Стабильная)",
-        "gemini-flash-latest (Автообновляемая)"
+        "gemini-flash-latest (Автообновляемая)",
     ]
-    
+
     indexing_progress_val: int = 0
     indexing_status: str = ""
     is_indexing: bool = False
@@ -54,7 +59,7 @@ class State(rx.State):
 
     def set_new_kb_name(self, value: str):
         self.new_kb_name = value
-        
+
     def set_current_kb_name(self, value: str):
         self.current_kb_name = value
 
@@ -64,7 +69,7 @@ class State(rx.State):
     async def init_data(self):
         await self.load_kbs()
         await self.load_sessions()
-        
+
     async def load_kbs(self):
         try:
             async with httpx.AsyncClient() as client:
@@ -98,18 +103,23 @@ class State(rx.State):
                         break
                 break
         await self.load_history()
-        return rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
+        return rx.call_script(
+            "setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);"
+        )
 
     async def create_session(self):
         if not self.new_session_name or not self.current_kb_name:
             return
         try:
             async with httpx.AsyncClient() as client:
-                resp = await client.post(f"{API_URL}/sessions", json={
-                    "name": self.new_session_name,
-                    "kb_name": self.current_kb_name,
-                    "model": self.selected_model.split(" ")[0]
-                })
+                resp = await client.post(
+                    f"{API_URL}/sessions",
+                    json={
+                        "name": self.new_session_name,
+                        "kb_name": self.current_kb_name,
+                        "model": self.selected_model.split(" ")[0],
+                    },
+                )
                 if resp.status_code == 200:
                     session_id = resp.json().get("session_id")
                     self.new_session_name = ""
@@ -137,7 +147,7 @@ class State(rx.State):
                 async with httpx.AsyncClient() as client:
                     await client.patch(
                         f"{API_URL}/sessions/{self.current_session_id}/model",
-                        json={"model": actual_model}
+                        json={"model": actual_model},
                     )
             except Exception as e:
                 print(f"Failed to update session model: {e}")
@@ -156,11 +166,17 @@ class State(rx.State):
             return
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(f"{API_URL}/history", params={"session_id": self.current_session_id})
+                response = await client.get(
+                    f"{API_URL}/history", params={"session_id": self.current_session_id}
+                )
                 if response.status_code == 200:
                     data = response.json().get("history", [])
                     self.chat_history = [
-                        ChatMessage(text=m["text"], is_user=m["is_user"], sources=m.get("sources", []))
+                        ChatMessage(
+                            text=m["text"],
+                            is_user=m["is_user"],
+                            sources=m.get("sources", []),
+                        )
                         for m in data
                     ]
                 else:
@@ -190,8 +206,12 @@ class State(rx.State):
                     f"{API_URL}/history",
                     json={
                         "session_id": self.current_session_id,
-                        "message": {"text": msg.text, "is_user": msg.is_user, "sources": msg.sources}
-                    }
+                        "message": {
+                            "text": msg.text,
+                            "is_user": msg.is_user,
+                            "sources": msg.sources,
+                        },
+                    },
                 )
         except Exception:
             pass
@@ -200,44 +220,50 @@ class State(rx.State):
         query = form_data.get("query", "")
         if not query.strip() or not self.current_session_id:
             return
-            
+
         self.current_query = ""
         user_msg = ChatMessage(text=query, is_user=True)
         self.chat_history.append(user_msg)
         await self._save_message_to_backend(user_msg)
-        
+
         self.is_loading = True
-        yield rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
+        yield rx.call_script(
+            "setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);"
+        )
         yield rx.set_value("query_input", "")
-        yield rx.call_script("setTimeout(() => { var el = document.getElementById('query_input'); if(el) { var setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set; setter.call(el, ''); el.dispatchEvent(new Event('input', { bubbles: true })); el.style.removeProperty('height'); } }, 50);")
-        
+        yield rx.call_script(
+            "setTimeout(() => { var el = document.getElementById('query_input'); if(el) { var setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set; setter.call(el, ''); el.dispatchEvent(new Event('input', { bubbles: true })); el.style.removeProperty('height'); } }, 50);"
+        )
+
         try:
             async with httpx.AsyncClient() as client:
                 actual_model = self.selected_model.split(" ")[0]
                 response = await client.post(
-                    f"{API_URL}/chat", 
+                    f"{API_URL}/chat",
                     json={
-                        "query": query, 
+                        "query": query,
                         "model": actual_model,
                         "session_id": self.current_session_id,
-                        "kb_name": self.current_kb_name
+                        "kb_name": self.current_kb_name,
                     },
-                    timeout=30.0
+                    timeout=30.0,
                 )
                 if response.status_code != 200:
                     try:
                         err_detail = response.json().get("detail", response.text)
                     except Exception:
                         err_detail = response.text
-                    err_msg = str(err_detail) if str(err_detail).strip() else "Unknown API Error"
+                    err_msg = (
+                        str(err_detail)
+                        if str(err_detail).strip()
+                        else "Unknown API Error"
+                    )
                     raise Exception(err_msg)
-                
+
                 data = response.json()
-                
+
                 bot_msg = ChatMessage(
-                    text=data["answer"], 
-                    is_user=False, 
-                    sources=data.get("sources", [])
+                    text=data["answer"], is_user=False, sources=data.get("sources", [])
                 )
                 self.chat_history.append(bot_msg)
                 await self._save_message_to_backend(bot_msg)
@@ -247,20 +273,23 @@ class State(rx.State):
             await self._save_message_to_backend(err_msg)
         finally:
             self.is_loading = False
-            yield rx.call_script("setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);")
+            yield rx.call_script(
+                "setTimeout(() => { var el = document.getElementById('chat_history_box'); if(el) el.scrollTop = el.scrollHeight; }, 100);"
+            )
 
     async def start_indexing(self):
         if not self.new_kb_name.strip():
             self.indexing_status = "Укажите имя базы знаний!"
             return
-            
+
         self.is_indexing = True
         self.indexing_progress_val = 0
         self.indexing_status = "Запуск индексации..."
         yield
-        
+
         try:
             import asyncio
+
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     f"{API_URL}/index",
@@ -268,9 +297,9 @@ class State(rx.State):
                         "kb_name": self.new_kb_name,
                         "docs_dir": self.docs_dir,
                         "chunk_size": self.chunk_size,
-                        "chunk_overlap": self.chunk_overlap
+                        "chunk_overlap": self.chunk_overlap,
                     },
-                    timeout=10.0
+                    timeout=10.0,
                 )
                 if response.status_code != 200:
                     self.indexing_status = f"Ошибка: {response.text}"
@@ -289,21 +318,21 @@ class State(rx.State):
                 async with httpx.AsyncClient() as client:
                     resp = await client.get(f"{API_URL}/index/progress")
                     data = resp.json()
-                    
+
                     status = data.get("status", "")
                     message = data.get("message", "")
                     total = data.get("total", 0)
                     processed = data.get("processed", 0)
-                    
+
                     if total > 0:
                         self.indexing_progress_val = int((processed / total) * 100)
                         self.indexing_status = f"{message} ({processed}/{total})"
                     else:
                         self.indexing_progress_val = 0
                         self.indexing_status = message
-                        
+
                     yield
-                    
+
                     if status in ["done", "error"]:
                         self.is_indexing = False
                         await self.load_kbs()
@@ -312,5 +341,5 @@ class State(rx.State):
                         break
             except Exception:
                 pass
-                
+
             await asyncio.sleep(1)

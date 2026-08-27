@@ -3,24 +3,33 @@ from google.genai import types
 from backend.core.config import settings
 from fastembed import TextEmbedding
 
+
 class LLMService:
     def __init__(self):
         self.client = genai.Client(api_key=settings.gemini_api_key)
         # Мультиязычная модель для векторизации (отлично понимает и РУ, и АНГЛ)
-        self.embedding_model = TextEmbedding(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
-        
+        self.embedding_model = TextEmbedding(
+            model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        )
+
     def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
         embeddings = list(self.embedding_model.embed(texts))
         return [emb.tolist() for emb in embeddings]
 
-    def generate_answer(self, query: str, context: list[str], model: str = "gemini-3.6-flash", history: list[dict] = None) -> str:
+    def generate_answer(
+        self,
+        query: str,
+        context: list[str],
+        model: str = "gemini-3.6-flash",
+        history: list[dict] = None,
+    ) -> str:
         context_str = "\n\n".join(context)
         history_str = ""
         if history:
             for msg in history:
                 role = "Пользователь" if msg.get("is_user") else "Ассистент"
                 history_str += f"{role}: {msg.get('text')}\n"
-                
+
         prompt = f"""
 Вы — интеллектуальный помощник, эксперт по анализу документов.
 Ваша задача — максимально подробно, профессионально и структурированно отвечать на вопросы пользователя, опираясь исключительно на предоставленный контекст и историю диалога.
@@ -44,8 +53,9 @@ class LLMService:
             contents=prompt,
             config=types.GenerateContentConfig(
                 temperature=0.3,
-            )
+            ),
         )
         return response.text
+
 
 llm_service = LLMService()
