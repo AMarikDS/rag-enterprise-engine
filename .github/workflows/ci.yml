@@ -47,5 +47,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create dummy .env
+        run: touch .env
+
       - name: Test Docker Compose Build
         run: docker compose build
