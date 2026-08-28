@@ -147,6 +147,14 @@ def get_indexing_progress():
 @app.post("/api/index")
 def index_documents(req: IndexRequest, background_tasks: BackgroundTasks):
     docs_dir = req.docs_dir or settings.default_docs_dir
+
+    # Smart path resolution for local Mac development
+    if docs_dir.startswith("/Users/") and "RAG-RKS" in docs_dir:
+        parts = docs_dir.split("RAG-RKS")
+        if len(parts) > 1:
+            rel_path = parts[1].lstrip("/")
+            docs_dir = os.path.join("/app", rel_path)
+
     chunk_size = req.chunk_size or settings.default_chunk_size
     chunk_overlap = req.chunk_overlap or settings.default_chunk_overlap
 
