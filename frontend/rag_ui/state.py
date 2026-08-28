@@ -244,7 +244,7 @@ class State(rx.State):
                         "session_id": self.current_session_id,
                         "kb_name": self.current_kb_name,
                     },
-                    timeout=30.0,
+                    timeout=120.0,
                 )
                 if response.status_code != 200:
                     try:
@@ -300,7 +300,7 @@ class State(rx.State):
                         "chunk_size": self.chunk_size,
                         "chunk_overlap": self.chunk_overlap,
                     },
-                    timeout=10.0,
+                    timeout=30.0,
                 )
                 if response.status_code != 200:
                     self.indexing_status = f"Ошибка: {response.text}"
