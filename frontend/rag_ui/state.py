@@ -34,9 +34,7 @@ class State(rx.State):
     new_session_name: str = ""
 
     # Settings State
-    docs_dir: str = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "docs"
-    )
+    docs_dir: str = "/app/docs"
     chunk_size: int = 1000
     chunk_overlap: int = 200
     selected_model: str = "gemini-3.6-flash"

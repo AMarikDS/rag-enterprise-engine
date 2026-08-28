@@ -54,7 +54,7 @@ def create_kb_dialog() -> rx.Component:
                     width="100%",
                 ),
                 rx.text(
-                    "Папка с документами",
+                    "Папка с документами (путь внутри Docker)",
                     color="gray",
                     font_size="14px",
                     margin_top="10px",
