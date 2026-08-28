@@ -48,14 +48,22 @@ class LLMService:
 Текущий запрос пользователя:
 {query}
 """
-        response = self.client.models.generate_content(
-            model=model,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.3,
-            ),
-        )
-        return response.text
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = self.client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        temperature=0.3,
+                    ),
+                )
+                return response.text
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    raise e
+                time.sleep(2 ** attempt)  # 1s, 2s, 4s
 
 
 llm_service = LLMService()

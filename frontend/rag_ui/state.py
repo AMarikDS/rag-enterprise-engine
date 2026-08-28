@@ -266,7 +266,10 @@ class State(rx.State):
                 self.chat_history.append(bot_msg)
                 await self._save_message_to_backend(bot_msg)
         except Exception as e:
-            err_msg = ChatMessage(text=f"Error: {str(e)}", is_user=False)
+            err_msg_text = str(e).strip()
+            if not err_msg_text:
+                err_msg_text = repr(e)
+            err_msg = ChatMessage(text=f"Error: {err_msg_text}", is_user=False)
             self.chat_history.append(err_msg)
             await self._save_message_to_backend(err_msg)
         finally:
