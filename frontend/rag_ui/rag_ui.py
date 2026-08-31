@@ -376,10 +376,21 @@ def index() -> rx.Component:
                                 rx.box(
                                     rx.cond(
                                         State.image_data.contains("image/"),
-                                        rx.image(src=State.image_data, height="100px", border_radius="10px"),
+                                        rx.image(
+                                            src=State.image_data,
+                                            height="100px",
+                                            border_radius="10px",
+                                        ),
                                         rx.hstack(
                                             rx.icon("file-text", size=32, color="cyan"),
-                                            rx.text(State.file_name, color="white", max_width="200px", overflow="hidden", text_overflow="ellipsis", white_space="nowrap"),
+                                            rx.text(
+                                                State.file_name,
+                                                color="white",
+                                                max_width="200px",
+                                                overflow="hidden",
+                                                text_overflow="ellipsis",
+                                                white_space="nowrap",
+                                            ),
                                             align_items="center",
                                             padding="10px",
                                             border="1px solid rgba(255,255,255,0.1)",
@@ -404,11 +415,16 @@ def index() -> rx.Component:
                                     position="relative",
                                     display="inline-block",
                                     margin_bottom="10px",
-                                )
+                                ),
                             ),
                             rx.hstack(
                                 rx.upload(
-                                    rx.icon("paperclip", size=24, color="gray", cursor="pointer"),
+                                    rx.icon(
+                                        "paperclip",
+                                        size=24,
+                                        color="gray",
+                                        cursor="pointer",
+                                    ),
                                     id="image_upload",
                                     accept={
                                         "image/png": [".png"],
@@ -417,10 +433,14 @@ def index() -> rx.Component:
                                         "text/plain": [".txt"],
                                         "text/csv": [".csv"],
                                         "application/pdf": [".pdf"],
-                                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+                                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+                                            ".docx"
+                                        ],
                                     },
                                     max_files=1,
-                                    on_drop=State.handle_upload(rx.upload_files(upload_id="image_upload")),
+                                    on_drop=State.handle_upload(
+                                        rx.upload_files(upload_id="image_upload")
+                                    ),
                                     border="none",
                                     padding="0",
                                     background="transparent",

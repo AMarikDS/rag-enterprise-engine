@@ -204,7 +204,8 @@ class State(rx.State):
             upload_data = await file.read()
             import base64
             import urllib.parse
-            b64 = base64.b64encode(upload_data).decode('utf-8')
+
+            b64 = base64.b64encode(upload_data).decode("utf-8")
             content_type = getattr(file, "content_type", "application/octet-stream")
             # reflex upload files usually have filename attribute
             filename = getattr(file, "filename", getattr(file, "name", "document"))
@@ -245,11 +246,11 @@ class State(rx.State):
 
         self.current_query = ""
         user_msg = ChatMessage(text=query, is_user=True, image=self.image_data)
-        
+
         # Save image data for API call and clear state immediately for UI responsiveness
         current_image_data = self.image_data
         self.image_data = ""
-        
+
         self.chat_history.append(user_msg)
         await self._save_message_to_backend(user_msg)
 
@@ -272,7 +273,9 @@ class State(rx.State):
                         "model": actual_model,
                         "session_id": self.current_session_id,
                         "kb_name": self.current_kb_name,
-                        "image_base64": current_image_data if current_image_data else None,
+                        "image_base64": (
+                            current_image_data if current_image_data else None
+                        ),
                     },
                     timeout=120.0,
                 )

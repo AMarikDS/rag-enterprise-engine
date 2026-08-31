@@ -30,17 +30,18 @@ class QdrantVectorDB:
         for i, (chunk, vector, meta) in enumerate(zip(chunks, embeddings, metadata)):
             # Use deterministic UUID based on chunk content to prevent duplicates
             import hashlib
+
             chunk_hash = hashlib.md5(chunk.encode("utf-8")).hexdigest()
             point_id = str(uuid.UUID(chunk_hash))
-            
+
             points.append(
                 PointStruct(id=point_id, vector=vector, payload={"text": chunk, **meta})
             )
-            
+
         # Batch upsert to prevent 32MB JSON payload limit error
         batch_size = 100
         for i in range(0, len(points), batch_size):
-            batch = points[i:i + batch_size]
+            batch = points[i : i + batch_size]
             self.client.upsert(collection_name=collection_name, points=batch)
 
     def search(self, collection_name: str, query_vector: list[float], limit: int = 5):
