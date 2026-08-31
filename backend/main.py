@@ -20,6 +20,7 @@ class ChatRequest(BaseModel):
     model: str = "gemini-3.6-flash"
     session_id: str
     kb_name: str
+    image_base64: Optional[str] = None
 
 
 class SettingsUpdateRequest(BaseModel):
@@ -189,7 +190,11 @@ def chat(req: ChatRequest):
         ]
 
         answer = llm_service.generate_answer(
-            query=req.query, context=context_chunks, model=req.model, history=history
+            query=req.query,
+            context=context_chunks,
+            model=req.model,
+            history=history,
+            image_base64=req.image_base64,
         )
 
         return {"answer": answer, "sources": context_chunks}

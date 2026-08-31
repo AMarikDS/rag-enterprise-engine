@@ -35,9 +35,31 @@ def navbar() -> rx.Component:
     )
 
 
-def chat_bubble(text: str, is_user: bool, sources: list[str] = []) -> rx.Component:
+def chat_bubble(text: str, is_user: bool, sources: list[str] = [], image: str = "") -> rx.Component:
     return rx.box(
         rx.vstack(
+            rx.cond(
+                image != "",
+                rx.cond(
+                    image.contains("image/"),
+                    rx.image(
+                        src=image,
+                        max_height="300px",
+                        border_radius="10px",
+                        margin_bottom="10px",
+                    ),
+                    rx.hstack(
+                        rx.icon("file-text", size=24, color="cyan"),
+                        rx.text("Прикрепленный документ", color="white", font_size="14px"),
+                        align_items="center",
+                        padding="8px 12px",
+                        border="1px solid rgba(255,255,255,0.1)",
+                        border_radius="10px",
+                        background="rgba(0,0,0,0.2)",
+                        margin_bottom="10px",
+                    )
+                )
+            ),
             rx.cond(
                 is_user,
                 rx.text(

@@ -11,6 +11,7 @@ class ChatMessage(BaseModel):
     text: str
     is_user: bool
     sources: List[str] = []
+    image: str = ""
 
 
 class SessionData(BaseModel):
@@ -24,6 +25,8 @@ class State(rx.State):
     chat_history: list[ChatMessage] = []
     current_query: str = ""
     is_loading: bool = False
+    image_data: str = ""
+    file_name: str = ""
 
     # KB & Sessions State
     kbs: list[str] = []
@@ -174,6 +177,7 @@ class State(rx.State):
                             text=m["text"],
                             is_user=m["is_user"],
                             sources=m.get("sources", []),
+                            image=m.get("image", ""),
                         )
                         for m in data
                     ]
@@ -195,6 +199,25 @@ class State(rx.State):
         if key == "Enter" and not shift_key:
             return State.send_message()
 
+    async def handle_upload(self, files: list[rx.UploadFile]):
+        for file in files:
+            upload_data = await file.read()
+            import base64
+            import urllib.parse
+            b64 = base64.b64encode(upload_data).decode('utf-8')
+            content_type = getattr(file, "content_type", "application/octet-stream")
+            # reflex upload files usually have filename attribute
+            filename = getattr(file, "filename", getattr(file, "name", "document"))
+            self.file_name = filename
+            # Encode filename to be safe in URI
+            safe_filename = urllib.parse.quote(filename)
+            self.image_data = f"data:{content_type};name={safe_filename};base64,{b64}"
+            break
+
+    def clear_image(self):
+        self.image_data = ""
+        self.file_name = ""
+
     async def _save_message_to_backend(self, msg: ChatMessage):
         if not self.current_session_id:
             return
@@ -208,6 +231,7 @@ class State(rx.State):
                             "text": msg.text,
                             "is_user": msg.is_user,
                             "sources": msg.sources,
+                            "image": msg.image,
                         },
                     },
                 )
@@ -220,7 +244,12 @@ class State(rx.State):
             return
 
         self.current_query = ""
-        user_msg = ChatMessage(text=query, is_user=True)
+        user_msg = ChatMessage(text=query, is_user=True, image=self.image_data)
+        
+        # Save image data for API call and clear state immediately for UI responsiveness
+        current_image_data = self.image_data
+        self.image_data = ""
+        
         self.chat_history.append(user_msg)
         await self._save_message_to_backend(user_msg)
 
@@ -243,6 +272,7 @@ class State(rx.State):
                         "model": actual_model,
                         "session_id": self.current_session_id,
                         "kb_name": self.current_kb_name,
+                        "image_base64": current_image_data if current_image_data else None,
                     },
                     timeout=120.0,
                 )
